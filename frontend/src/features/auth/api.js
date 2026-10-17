@@ -10,7 +10,7 @@ export async function signIn({ email, password }) {
 
 /**
  * Creates an auth user; the on_auth_user_created trigger then creates their profile with this username.
- * Returns { session } — session is null when email confirmation is required.
+ * Email confirmation is disabled in Supabase, so this also logs the user in.
  */
 export async function signUp({ username, email, password }) {
   // Check first: a taken username makes the trigger fail with a vague "Database error saving new user".
@@ -28,10 +28,6 @@ export async function signUp({ username, email, password }) {
     options: { data: { username } },
   })
   if (error) throw error
-  // With email confirmation on, Supabase hides "email already registered" by returning a user with no identities.
-  if (data.user && data.user.identities?.length === 0) {
-    throw new Error('An account with this email already exists')
-  }
   return data
 }
 

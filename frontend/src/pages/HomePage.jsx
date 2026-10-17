@@ -1,6 +1,7 @@
 // / — placeholder home that proves login works: shows the user's profile from the database.
 import { useSession, useSignOut } from '../features/auth/hooks'
 import { useProfile } from '../features/profiles/hooks'
+import { ProfileCard } from '../features/profiles/components/ProfileCard'
 
 export function HomePage() {
   const { session } = useSession()
@@ -11,9 +12,7 @@ export function HomePage() {
     <main className="flex min-h-svh flex-col items-center justify-center gap-4 bg-stone-100 px-4">
       {profile.isLoading && <p className="text-stone-500">Loading profile…</p>}
       {profile.error && <p className="text-red-600">Could not load your profile: {profile.error.message}</p>}
-      {profile.data && (
-        <h1 className="text-2xl font-semibold text-emerald-800">Welcome, @{profile.data.username}</h1>
-      )}
+      {profile.data && <ProfileCard profile={profile.data} email={session.user.email} />}
       <button
         type="button"
         onClick={() => signOut.mutate()}

@@ -13,15 +13,7 @@ export function SignUpForm() {
     formState: { errors },
   } = useForm({ resolver: zodResolver(signUpSchema) })
 
-  // No session after sign-up means Supabase wants the email confirmed first.
-  if (signUp.isSuccess && !signUp.data.session) {
-    return (
-      <p role="status" className="text-stone-700">
-        Account created! Check your email to confirm it, then log in.
-      </p>
-    )
-  }
-
+  // Email confirmation is off, so sign-up logs the user in directly and LoginPage redirects home.
   return (
     <form onSubmit={handleSubmit((values) => signUp.mutate(values))} className="space-y-4" noValidate>
       <FormField label="Username" autoComplete="username" error={errors.username?.message} {...register('username')} />
