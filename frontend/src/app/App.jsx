@@ -2,8 +2,14 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from '../features/auth/components/RequireAuth'
+import { AppLayout } from '../components/layout/AppLayout'
 import { HomePage } from '../pages/HomePage'
 import { LoginPage } from '../pages/LoginPage'
+import { ProfilePage } from '../pages/ProfilePage'
+import { CommunitiesPage } from '../pages/CommunitiesPage'
+import { ShopPage } from '../pages/ShopPage'
+import { GuidePage } from '../pages/GuidePage'
+import { EventsPage } from '../pages/EventsPage'
 
 const queryClient = new QueryClient()
 
@@ -13,14 +19,21 @@ export function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          {/* Every page inside the layout needs a logged-in user for now. */}
           <Route
-            path="/"
             element={
               <RequireAuth>
-                <HomePage />
+                <AppLayout />
               </RequireAuth>
             }
-          />
+          >
+            <Route index element={<HomePage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="communities" element={<CommunitiesPage />} />
+            <Route path="shop" element={<ShopPage />} />
+            <Route path="guide" element={<GuidePage />} />
+            <Route path="events" element={<EventsPage />} />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
