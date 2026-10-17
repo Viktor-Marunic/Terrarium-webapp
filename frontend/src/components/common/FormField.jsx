@@ -1,10 +1,11 @@
-// Labeled input with its validation message; spread react-hook-form's register() into it.
-export function FormField({ label, error, ...inputProps }) {
+// Labeled input, textarea (as="textarea") or select (as="select", options as children) with its validation message.
+// Spread react-hook-form's register() into it.
+export function FormField({ label, error, as: Control = 'input', ...inputProps }) {
   return (
     <label className="block text-left">
       <span className="text-sm font-medium text-stone-700">{label}</span>
-      <input
-        className="mt-1 w-full rounded-md border border-stone-300 px-3 py-2 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none"
+      <Control
+        className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none"
         aria-invalid={Boolean(error)}
         {...inputProps}
       />

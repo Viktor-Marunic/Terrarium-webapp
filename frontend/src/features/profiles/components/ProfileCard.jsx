@@ -1,10 +1,6 @@
 // Small card showing a user's avatar and basic account info.
 import { format } from 'date-fns'
-
-/** Uploaded avatar if the user has one, otherwise a blobatar generated from their username (same name = same blob). */
-function avatarSrc(profile) {
-  return profile.avatar_url || `https://blobatar.dev/avatar/${encodeURIComponent(profile.username)}`
-}
+import { avatarSrc } from '../avatar'
 
 export function ProfileCard({ profile, email }) {
   return (

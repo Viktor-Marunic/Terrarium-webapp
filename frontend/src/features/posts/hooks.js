@@ -1,0 +1,44 @@
+// React hooks for posts.
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createPost, deletePost, getPost, listPosts, updatePost } from './api'
+
+/** All posts, or only one community's when communityId is given. */
+export function usePosts(communityId) {
+  return useQuery({
+    queryKey: ['posts', communityId ?? 'all'],
+    queryFn: () => listPosts(communityId),
+  })
+}
+
+/** `data` is null when the post doesn't exist. */
+export function usePost(id) {
+  return useQuery({ queryKey: ['post', id], queryFn: () => getPost(id) })
+}
+
+export function useCreatePost() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: createPost,
+    // Refetch every feed (all + filtered) so the new post shows up wherever the user looks.
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['posts'] }),
+  })
+}
+
+export function useUpdatePost() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updatePost,
+    onSuccess: (post) => {
+      queryClient.invalidateQueries({ queryKey: ['post', post.id] })
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+    },
+  })
+}
+
+export function useDeletePost() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deletePost,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['posts'] }),
+  })
+}

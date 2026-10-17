@@ -7,6 +7,7 @@ import { HomePage } from '../pages/HomePage'
 import { LoginPage } from '../pages/LoginPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { CommunitiesPage } from '../pages/CommunitiesPage'
+import { PostPage } from '../pages/PostPage'
 import { ShopPage } from '../pages/ShopPage'
 import { GuidePage } from '../pages/GuidePage'
 import { EventsPage } from '../pages/EventsPage'
@@ -30,6 +31,7 @@ export function App() {
             <Route index element={<HomePage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="communities" element={<CommunitiesPage />} />
+            <Route path="posts/:id" element={<PostPage />} />
             <Route path="shop" element={<ShopPage />} />
             <Route path="guide" element={<GuidePage />} />
             <Route path="events" element={<EventsPage />} />

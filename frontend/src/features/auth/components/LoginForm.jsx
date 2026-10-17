@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '../schemas'
 import { useSignIn } from '../hooks'
-import { FormField } from './FormField'
+import { FormField } from '../../../components/common/FormField'
 
 export function LoginForm() {
   const signIn = useSignIn()
