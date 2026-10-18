@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase'
 export async function listComments(postId) {
   const { data, error } = await supabase
     .from('comments')
-    .select('id, author_id, parent_id, body, created_at, edited_at, author:profiles(username)')
+    .select('id, author_id, parent_id, body, created_at, edited_at, score, author:profiles(username), votes(value)')
     .eq('post_id', postId)
     .order('created_at')
   if (error) throw error

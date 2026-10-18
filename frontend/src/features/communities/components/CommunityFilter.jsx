@@ -1,5 +1,7 @@
 // Row of filter chips ("All" + one per community). The choice lives in the URL (?c=slug) so it survives refresh and back.
+// Chips keep the current sort, so switching community doesn't reset New/Top.
 import { Link } from 'react-router-dom'
+import { feedPath } from '../../../lib/utils'
 
 function chipClass(isActive) {
   return `shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -9,13 +11,13 @@ function chipClass(isActive) {
   }`
 }
 
-export function CommunityFilter({ communities, activeSlug }) {
+export function CommunityFilter({ communities, activeSlug, sort }) {
   return (
     // Scrolls sideways on phones instead of wrapping into several rows.
     <nav aria-label="Filter by community" className="-mx-4 overflow-x-auto px-4">
       <ul className="flex gap-2 pb-1">
         <li>
-          <Link to="/communities" className={chipClass(!activeSlug)} aria-current={!activeSlug ? 'page' : undefined}>
+          <Link to={feedPath(null, sort)} className={chipClass(!activeSlug)} aria-current={!activeSlug ? 'page' : undefined}>
             All
           </Link>
         </li>
@@ -24,7 +26,7 @@ export function CommunityFilter({ communities, activeSlug }) {
           return (
             <li key={community.id}>
               <Link
-                to={`/communities?c=${community.slug}`}
+                to={feedPath(community.slug, sort)}
                 className={chipClass(isActive)}
                 aria-current={isActive ? 'page' : undefined}
               >

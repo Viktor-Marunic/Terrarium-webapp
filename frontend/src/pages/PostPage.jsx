@@ -8,6 +8,8 @@ import { useDeletePost, usePost } from '../features/posts/hooks'
 import { PostMeta } from '../features/posts/components/PostMeta'
 import { EditPostForm } from '../features/posts/components/EditPostForm'
 import { CommentSection } from '../features/comments/components/CommentSection'
+import { VoteButtons } from '../features/votes/components/VoteButtons'
+import { myVoteOf } from '../features/votes/score'
 
 export function PostPage() {
   const { id } = useParams()
@@ -50,17 +52,18 @@ export function PostPage() {
           <PostMeta post={post.data} />
           <h1 className="mt-2 text-xl font-semibold break-words text-stone-900">{title}</h1>
           {body && <p className="mt-3 break-words whitespace-pre-line text-stone-800">{body}</p>}
-          {isOwner && (
-            <div className="mt-4 border-t border-stone-100 pt-3">
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-stone-100 pt-3">
+            <VoteButtons target="post" id={id} score={post.data.score} myVote={myVoteOf(post.data)} />
+            {isOwner && (
               <EditDeleteButtons
                 onEdit={() => setIsEditing(true)}
                 onDelete={handleDelete}
                 isDeleting={deletePost.isPending}
                 confirmMessage="Delete this post and all its comments? This cannot be undone."
               />
-              {deletePost.error && <p className="mt-2 text-sm text-red-600">{deletePost.error.message}</p>}
-            </div>
-          )}
+            )}
+          </div>
+          {deletePost.error && <p className="mt-2 text-sm text-red-600">{deletePost.error.message}</p>}
         </article>
       )}
       <CommentSection postId={id} />
