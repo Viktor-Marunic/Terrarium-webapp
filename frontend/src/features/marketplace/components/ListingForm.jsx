@@ -1,10 +1,11 @@
-// "Sell an item" form: photos, details, price and how buyers can reach the seller.
-// Calls onCreated(listing) after the photos are uploaded and the listing is saved, or onCancel.
+// Listing form: photos, details, price and how buyers can reach the seller.
+// Without `listing` it's the "Sell an item" form; with `listing` it edits that listing (fields start filled in,
+// already-uploaded photos are kept as URLs). Calls onSaved(listing) once photos and row are saved, or onCancel.
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormField } from '../../../components/common/FormField'
-import { listingCategories, listingConditions, sellListingSchema } from '../schemas'
-import { useCreateListing } from '../hooks'
+import { listingCategories, listingConditions, listingSchema } from '../schemas'
+import { useCreateListing, useUpdateListing } from '../hooks'
 import { ImagePicker } from './ImagePicker'
 
 /** First message for the photo list: a list-level one ("Add at least one photo") or the first bad file's. */
@@ -13,19 +14,40 @@ function imagesError(error) {
   return error.message ?? error.find?.((fileError) => fileError)?.message
 }
 
-export function SellListingForm({ onCreated, onCancel }) {
+const emptyValues = { images: [], title: '', category: '', condition: '', price: NaN, description: '', contactInfo: '' }
+
+/** A saved listing → form values (the reverse of toListingRow in api.js). */
+function toFormValues(listing) {
+  return {
+    images: listing.image_urls,
+    title: listing.title,
+    category: listing.category,
+    condition: listing.condition,
+    price: listing.price,
+    description: listing.description ?? '',
+    contactInfo: listing.contact_info,
+  }
+}
+
+export function ListingForm({ listing, onSaved, onCancel }) {
+  const isEditing = Boolean(listing)
   const createListing = useCreateListing()
+  const updateListing = useUpdateListing()
+  const save = isEditing ? updateListing : createListing
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(sellListingSchema),
-    defaultValues: { images: [], title: '', category: '', condition: '', price: NaN, description: '', contactInfo: '' },
+    resolver: zodResolver(listingSchema),
+    defaultValues: isEditing ? toFormValues(listing) : emptyValues,
   })
 
-  const onSubmit = (values) => createListing.mutate(values, { onSuccess: onCreated })
+  const onSubmit = (values) =>
+    save.mutate(isEditing ? { ...values, id: listing.id, previousImageUrls: listing.image_urls } : values, {
+      onSuccess: onSaved,
+    })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-lg bg-white p-4 shadow-sm" noValidate>
@@ -79,9 +101,9 @@ export function SellListingForm({ onCreated, onCancel }) {
         {...register('contactInfo')}
       />
       <p className="-mt-2 text-xs text-stone-500">Shown to logged-in users who tap “Contact seller”.</p>
-      {createListing.error && (
+      {save.error && (
         <p role="alert" className="text-sm text-red-600">
-          {createListing.error.message}
+          {save.error.message}
         </p>
       )}
       <div className="flex gap-2">
@@ -94,10 +116,10 @@ export function SellListingForm({ onCreated, onCancel }) {
         </button>
         <button
           type="submit"
-          disabled={createListing.isPending}
+          disabled={save.isPending}
           className="flex-1 rounded-md bg-emerald-700 py-2 font-medium text-white hover:bg-emerald-800 disabled:opacity-60"
         >
-          {createListing.isPending ? 'Publishing…' : 'Publish listing'}
+          {save.isPending ? 'Saving…' : isEditing ? 'Save changes' : 'Publish listing'}
         </button>
       </div>
     </form>

@@ -14,21 +14,22 @@ export function ContactSeller({ contactInfo, sellerUsername }) {
       <button
         type="button"
         onClick={() => setIsRevealed(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 py-2.5 font-medium text-white hover:bg-emerald-800"
+        // Secondary style: "Add to bag" above it is the main action.
+        className="flex w-full items-center justify-center gap-2 rounded-lg border border-stone-300 bg-paper py-2.5 text-sm font-medium text-forest-800 transition-[border-color,scale] hover:border-forest-700 motion-safe:active:scale-[0.98]"
       >
-        <ChatCircleIcon size={20} aria-hidden="true" />
+        <ChatCircleIcon size={18} aria-hidden="true" />
         Contact seller
       </button>
     )
   }
 
   return (
-    <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
+    <div className="rounded-lg border border-sage-200 bg-sage-50 p-4">
       <p className="text-sm text-stone-600">Reach @{sellerUsername} at:</p>
-      <p className="mt-1 font-medium break-words text-stone-900">
+      <p className="mt-1 font-medium wrap-anywhere text-stone-900">
         {looksLikeEmail(contactInfo) ? (
           // External mailto: link, so a plain <a> (not a router <Link>) is correct here.
-          <a href={`mailto:${contactInfo}`} className="text-emerald-800 underline">
+          <a href={`mailto:${contactInfo}`} className="text-forest-700 underline hover:text-forest-800">
             {contactInfo}
           </a>
         ) : (

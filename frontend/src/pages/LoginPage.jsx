@@ -15,7 +15,7 @@ export function LoginPage() {
   return (
     <main className="flex min-h-svh items-center justify-center bg-stone-100 px-4">
       <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-md">
-        <h1 className="mb-1 text-center text-2xl font-semibold text-emerald-800">Terrarium</h1>
+        <h1 className="mb-1 text-center text-2xl font-semibold text-emerald-800">TerraSpace</h1>
         <p className="mb-6 text-center text-sm text-stone-500">
           {isLogin ? 'Log in to your account' : 'Create a new account'}
         </p>

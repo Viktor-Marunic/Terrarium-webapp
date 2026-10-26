@@ -1,6 +1,14 @@
 // React hooks for marketplace listings.
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { LISTINGS_PAGE_SIZE, createListing, deleteListing, getListing, listListings, setListingStatus } from './api'
+import {
+  LISTINGS_PAGE_SIZE,
+  createListing,
+  deleteListing,
+  getListing,
+  listListings,
+  setListingStatus,
+  updateListing,
+} from './api'
 
 /**
  * Active listings, all or one category, loaded a page at a time ("Load more listings").
@@ -28,6 +36,20 @@ export function useCreateListing() {
     mutationFn: createListing,
     // Refetch every grid (all + each category) so the new listing shows up wherever the user looks.
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['listings'] }),
+  })
+}
+
+/** Mutation taking { id, previousImageUrls, ...form values }. */
+export function useUpdateListing() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateListing,
+    onSuccess: (listing) => {
+      queryClient.invalidateQueries({ queryKey: ['listing', listing.id] })
+      queryClient.invalidateQueries({ queryKey: ['listings'] })
+      // Bags show the title, price and photo too.
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
+    },
   })
 }
 

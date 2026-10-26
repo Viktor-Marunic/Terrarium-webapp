@@ -1,9 +1,10 @@
 // Grid of active listings (all, or one category) with loading, error and empty states,
 // plus "Showing X of Y" and a "Load more listings" button that fetches the next page.
+// renderImageOverlay(listing) / renderAction(listing) fill ListingCard's slots (see ListingCard).
 import { useListings } from '../hooks'
 import { ListingCard } from './ListingCard'
 
-export function ListingGrid({ category }) {
+export function ListingGrid({ category, renderImageOverlay, renderAction }) {
   const listings = useListings(category)
 
   if (listings.isLoading) return <p className="text-stone-500">Loading listings…</p>
@@ -21,12 +22,12 @@ export function ListingGrid({ category }) {
       <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
         {items.map((listing) => (
           // flex so every card stretches to the tallest card in its row.
-          <li key={listing.id} className="flex">
-            <ListingCard listing={listing} />
+          <li key={listing.id} className="flex min-w-0">
+            <ListingCard listing={listing} imageOverlay={renderImageOverlay?.(listing)} action={renderAction?.(listing)} />
           </li>
         ))}
       </ul>
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 pt-2">
         <p className="text-sm text-stone-500">
           Showing {items.length} of {totalCount} listings
         </p>
@@ -35,7 +36,7 @@ export function ListingGrid({ category }) {
             type="button"
             onClick={() => listings.fetchNextPage()}
             disabled={listings.isFetchingNextPage}
-            className="rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:bg-stone-50 disabled:opacity-60"
+            className="rounded-lg border border-stone-300 bg-paper px-4 py-2.5 text-sm font-medium text-forest-800 transition-colors hover:border-forest-700 hover:bg-white disabled:opacity-60"
           >
             {listings.isFetchingNextPage ? 'Loading…' : 'Load more listings'}
           </button>

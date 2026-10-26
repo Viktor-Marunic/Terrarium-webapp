@@ -1,7 +1,7 @@
-// Seller-only buttons on their own listing: mark it sold (or available again) and delete it.
+// Seller-only buttons on their own listing: mark it sold (or available again), edit it, and delete it.
 // Only shown to the seller in the UI; the RLS policies are what actually stop anyone else.
-import { useNavigate } from 'react-router-dom'
-import { ArrowCounterClockwiseIcon, CheckCircleIcon, TrashIcon } from '@phosphor-icons/react'
+import { Link, useNavigate } from 'react-router-dom'
+import { ArrowCounterClockwiseIcon, CheckCircleIcon, PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react'
 import { useDeleteListing, useSetListingStatus } from '../hooks'
 
 export function ListingOwnerActions({ listing }) {
@@ -23,23 +23,32 @@ export function ListingOwnerActions({ listing }) {
   const error = setStatus.error ?? deleteListing.error
 
   return (
-    <div className="space-y-2 border-t border-stone-100 pt-4">
+    // Same stacked primary + secondary pair as the mockup's "Add to bag" / "Message seller".
+    <div className="space-y-2">
       <p className="text-xs font-medium tracking-wide text-stone-500 uppercase">Your listing</p>
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={handleToggleSold}
-          disabled={setStatus.isPending}
-          className="flex flex-1 items-center justify-center gap-2 rounded-md border border-stone-300 bg-white py-2 text-sm font-medium text-stone-800 hover:bg-stone-50 disabled:opacity-60"
+      <button
+        type="button"
+        onClick={handleToggleSold}
+        disabled={setStatus.isPending}
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-forest-700 py-3 font-medium text-white transition-[background-color,scale] hover:bg-forest-800 disabled:opacity-60 motion-safe:active:scale-[0.98]"
+      >
+        {isSold ? <ArrowCounterClockwiseIcon size={18} aria-hidden="true" /> : <CheckCircleIcon size={18} aria-hidden="true" />}
+        {isSold ? 'Mark as available' : 'Mark as sold'}
+      </button>
+      {/* Secondary actions side by side under the main one. */}
+      <div className="grid grid-cols-2 gap-2">
+        <Link
+          to={`/shop/${listing.id}/edit`}
+          className="flex items-center justify-center gap-2 rounded-lg border border-stone-300 bg-paper py-2.5 text-sm font-medium text-forest-800 transition-colors hover:border-forest-700"
         >
-          {isSold ? <ArrowCounterClockwiseIcon size={18} aria-hidden="true" /> : <CheckCircleIcon size={18} aria-hidden="true" />}
-          {isSold ? 'Mark as available' : 'Mark as sold'}
-        </button>
+          <PencilSimpleIcon size={18} aria-hidden="true" />
+          Edit
+        </Link>
         <button
           type="button"
           onClick={handleDelete}
           disabled={deleteListing.isPending}
-          className="flex items-center justify-center gap-2 rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-60"
+          className="flex items-center justify-center gap-2 rounded-lg border border-stone-300 bg-paper py-2.5 text-sm font-medium text-red-700 transition-colors hover:border-red-300 hover:bg-red-50 disabled:opacity-60"
         >
           <TrashIcon size={18} aria-hidden="true" />
           {deleteListing.isPending ? 'Deleting…' : 'Delete'}

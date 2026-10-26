@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+/* Design tokens from the TerraSpace mockups (used by the layout and the marketplace so far).
+   Each one becomes a Tailwind utility: bg-forest-700, text-sage-600, bg-paper, font-display… */
+@theme {
+  --font-display: "Lora", Georgia, serif;
+
+  /* Deep forest green: primary buttons, active chips, headings. */
+  --color-forest-700: #2c4a3b;
+  --color-forest-800: #223a2e;
+
+  /* Soft sage: photo placeholders, avatar circles, highlight boxes. */
+  --color-sage-50: #f1f4ee;
+  --color-sage-100: #e3eadf;
+  --color-sage-200: #cfdbc9;
+  --color-sage-600: #6f8c76;
+
+  /* Warm page background, and a lighter off-white for cards, header and footer. */
+  --color-cream: #f4f1ea;
+  --color-paper: #fdfcf8;
+}

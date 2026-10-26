@@ -1,7 +1,7 @@
 // /shop/new — "Sell an item": the listing form; on success it opens the new listing's product page.
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeftIcon } from '@phosphor-icons/react'
-import { SellListingForm } from '../features/marketplace/components/SellListingForm'
+import { ListingForm } from '../features/marketplace/components/ListingForm'
 
 export function SellPage() {
   const navigate = useNavigate()
@@ -13,9 +13,9 @@ export function SellPage() {
         Back to marketplace
       </Link>
       <h1 className="text-xl font-semibold text-stone-800">Sell an item</h1>
-      <SellListingForm
+      <ListingForm
         // replace: Back from the new listing should return to the shop, not to an empty sell form.
-        onCreated={(listing) => navigate(`/shop/${listing.id}`, { replace: true })}
+        onSaved={(listing) => navigate(`/shop/${listing.id}`, { replace: true })}
         onCancel={() => navigate('/shop')}
       />
     </div>

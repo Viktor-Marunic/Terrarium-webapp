@@ -1,17 +1,19 @@
-// Shell around every logged-in page: header on top, page content in the middle, tab bar on phones.
+// Shell around every logged-in page: header with tabs on top, page content, footer at the bottom.
 import { Outlet } from 'react-router-dom'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
+import { Footer } from './Footer'
 
 export function AppLayout() {
   return (
-    <div className="min-h-svh bg-stone-100">
+    // Column flex + flex-1 on main keeps the footer at the bottom of the screen even on short pages.
+    // overflow-x-clip is a safety net: nothing a user types can make the page scroll sideways on a phone
+    // (clip, unlike hidden, keeps the sticky header working).
+    <div className="flex min-h-svh flex-col overflow-x-clip bg-cream">
       <Header />
-      {/* Extra bottom padding on phones so content isn't hidden behind the fixed BottomNav. */}
-      <main className="mx-auto max-w-5xl px-4 pt-6 pb-24 md:pb-6">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-12">
         <Outlet />
       </main>
-      <BottomNav />
+      <Footer />
     </div>
   )
 }

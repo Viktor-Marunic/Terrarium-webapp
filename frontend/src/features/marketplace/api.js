@@ -34,19 +34,6 @@ export async function getListing(id) {
   return data
 }
 
-/** Uploads photos to {user_id}/{uuid}.{ext} (the storage policy only allows the user's own folder) and returns their public URLs. */
-async function uploadListingImages(userId, files) {
-  const urls = []
-  for (const file of files) {
-    const extension = file.name.split('.').pop().toLowerCase()
-    const path = `${userId}/${crypto.randomUUID()}.${extension}`
-    const { error } = await supabase.storage.from(BUCKET).upload(path, file, { contentType: file.type })
-    if (error) throw error
-    urls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl)
-  }
-  return urls
-}
-
 /** Turns a public URL back into its storage path ({user_id}/{file}), which remove() needs. */
 function pathFromPublicUrl(url) {
   return url.split(`/${BUCKET}/`)[1]
@@ -59,33 +46,72 @@ async function removeListingImages(urls) {
 }
 
 /**
+ * Turns the form's photo list into public URLs, in the same order: URL strings (already uploaded) are kept,
+ * Files are uploaded to {user_id}/{uuid}.{ext} (the storage policy only allows the user's own folder).
+ * @returns {Promise<{ imageUrls: string[], uploadedUrls: string[] }>} uploadedUrls = only the new ones, for cleanup.
+ */
+async function resolveImageUrls(images) {
+  const { data: sessionData } = await supabase.auth.getSession()
+  const userId = sessionData.session?.user.id
+  if (!userId) throw new Error('You need to be logged in to do that')
+
+  const imageUrls = []
+  const uploadedUrls = []
+  try {
+    for (const image of images) {
+      if (typeof image === 'string') {
+        imageUrls.push(image)
+        continue
+      }
+      const path = `${userId}/${crypto.randomUUID()}.${image.name.split('.').pop().toLowerCase()}`
+      const { error } = await supabase.storage.from(BUCKET).upload(path, image, { contentType: image.type })
+      if (error) throw error
+      const url = supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
+      imageUrls.push(url)
+      uploadedUrls.push(url)
+    }
+  } catch (error) {
+    // One upload failed: don't leave the ones before it orphaned in storage.
+    await removeListingImages(uploadedUrls).catch(() => {})
+    throw error
+  }
+  return { imageUrls, uploadedUrls }
+}
+
+/** Form values → listings columns. */
+function toListingRow({ title, category, condition, price, description, contactInfo }, imageUrls) {
+  return { title, category, condition, price, description: description || null, contact_info: contactInfo, image_urls: imageUrls }
+}
+
+/**
  * Uploads the photos, then creates the listing as the logged-in user (seller_id is filled in by the database).
  * @param {{ images: File[], title: string, category: string, condition: string, price: number, description: string, contactInfo: string }} values
  */
-export async function createListing({ images, title, category, condition, price, description, contactInfo }) {
-  const { data: sessionData } = await supabase.auth.getSession()
-  const userId = sessionData.session?.user.id
-  if (!userId) throw new Error('You need to be logged in to sell an item')
-
-  const imageUrls = await uploadListingImages(userId, images)
-  const { data, error } = await supabase
-    .from('listings')
-    .insert({
-      title,
-      category,
-      condition,
-      price,
-      description: description || null,
-      contact_info: contactInfo,
-      image_urls: imageUrls,
-    })
-    .select()
-    .single()
+export async function createListing(values) {
+  const { imageUrls, uploadedUrls } = await resolveImageUrls(values.images)
+  const { data, error } = await supabase.from('listings').insert(toListingRow(values, imageUrls)).select().single()
   if (error) {
     // Don't leave orphaned photos in storage when the row itself is rejected.
-    await removeListingImages(imageUrls).catch(() => {})
+    await removeListingImages(uploadedUrls).catch(() => {})
     throw error
   }
+  return data
+}
+
+/**
+ * Saves edits to one of the user's own listings (RLS rejects anyone else's). New photos are uploaded first;
+ * photos the seller removed are deleted from storage only after the row is saved.
+ * @param {{ id: string, previousImageUrls: string[], images: (string | File)[] } & object} values same fields as createListing
+ */
+export async function updateListing({ id, previousImageUrls, ...values }) {
+  const { imageUrls, uploadedUrls } = await resolveImageUrls(values.images)
+  const { data, error } = await supabase.from('listings').update(toListingRow(values, imageUrls)).eq('id', id).select().single()
+  if (error) {
+    await removeListingImages(uploadedUrls).catch(() => {})
+    throw error
+  }
+  // The listing is already saved, so a failed cleanup only leaves unused files behind; don't fail the edit.
+  await removeListingImages(previousImageUrls.filter((url) => !imageUrls.includes(url))).catch(() => {})
   return data
 }
 

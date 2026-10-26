@@ -1,5 +1,6 @@
-// Photo picker for the sell form: an "Add photos" tile plus a preview of each chosen photo with a remove button.
-// Controlled (value = File[], onChange) so react-hook-form's Controller can own the list; the Zod schema validates it.
+// Photo picker for the listing form: an "Add photos" tile plus a preview of each photo with a remove button.
+// Controlled (value, onChange) so react-hook-form's Controller can own the list; the Zod schema validates it.
+// Items are Files (newly picked) or URL strings (photos already uploaded, when editing).
 import { PlusIcon, XIcon } from '@phosphor-icons/react'
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES } from '../schemas'
 
@@ -7,9 +8,10 @@ import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES } from '../schemas'
 // effect, because StrictMode's effect re-run would revoke them while still shown. Revoked when a photo is removed;
 // the few left when the form closes are freed on page reload.
 const previewUrls = new WeakMap()
-function previewUrlFor(file) {
-  if (!previewUrls.has(file)) previewUrls.set(file, URL.createObjectURL(file))
-  return previewUrls.get(file)
+function previewUrlFor(image) {
+  if (typeof image === 'string') return image
+  if (!previewUrls.has(image)) previewUrls.set(image, URL.createObjectURL(image))
+  return previewUrls.get(image)
 }
 
 export function ImagePicker({ value, onChange, error }) {
@@ -20,10 +22,13 @@ export function ImagePicker({ value, onChange, error }) {
     event.target.value = ''
   }
 
-  const handleRemove = (file) => {
-    URL.revokeObjectURL(previewUrls.get(file))
-    previewUrls.delete(file)
-    onChange(value.filter((other) => other !== file))
+  // Removing an already-uploaded photo only drops it from the list; it's deleted from storage when the edit is saved.
+  const handleRemove = (image) => {
+    if (previewUrls.has(image)) {
+      URL.revokeObjectURL(previewUrls.get(image))
+      previewUrls.delete(image)
+    }
+    onChange(value.filter((other) => other !== image))
   }
 
   return (
