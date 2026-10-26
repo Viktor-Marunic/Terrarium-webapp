@@ -16,10 +16,7 @@ export function ProfileCard({ profile, postCount, badges }) {
           alt={`${profile.username}'s avatar`}
           className="size-16 shrink-0 rounded-full bg-sage-100"
         />
-        <div className="min-w-0">
-          <h2 className="truncate text-xl font-semibold text-forest-800">{profile.username}</h2>
-          <p className="truncate text-sm text-stone-500">@{profile.username}</p>
-        </div>
+        <h2 className="min-w-0 truncate text-xl font-semibold text-forest-800">@{profile.username}</h2>
       </div>
 
       <p className="mt-4 text-sm break-words text-stone-700">
