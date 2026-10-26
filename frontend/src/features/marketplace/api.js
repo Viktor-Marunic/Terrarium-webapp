@@ -6,7 +6,7 @@ export const LISTINGS_PAGE_SIZE = 12
 
 // Columns every listing view needs, including the embedded seller username.
 const LISTING_COLUMNS =
-  'id, seller_id, title, description, price, condition, category, contact_info, image_urls, status, created_at, seller:profiles(username)'
+  'id, seller_id, title, description, price, condition, category, contact_info, image_urls, status, created_at, seller:profiles(username, avatar_url)'
 
 /**
  * One page of active listings, newest first, optionally only one category.

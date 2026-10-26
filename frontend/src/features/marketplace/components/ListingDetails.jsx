@@ -7,7 +7,8 @@ import { ListingSpecs } from './ListingSpecs'
 import { SellerCard } from './SellerCard'
 
 // `buyAction` ("Add to bag", passed in by the page) is shown above "Contact seller" for other users' active listings.
-export function ListingDetails({ listing, isOwner, buyAction }) {
+// `sellerAvatarSrc` (also from the page) is the seller's profile picture for the seller card.
+export function ListingDetails({ listing, isOwner, buyAction, sellerAvatarSrc }) {
   const isSold = listing.status === 'sold'
   const sellerUsername = listing.seller?.username ?? 'deleted'
 
@@ -44,7 +45,7 @@ export function ListingDetails({ listing, isOwner, buyAction }) {
       )}
 
       <ListingSpecs listing={listing} />
-      <SellerCard username={sellerUsername} listedAt={listing.created_at} />
+      <SellerCard username={sellerUsername} avatarSrc={sellerAvatarSrc} listedAt={listing.created_at} />
     </div>
   )
 }

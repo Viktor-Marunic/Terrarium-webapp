@@ -2,6 +2,7 @@
 // Shared by the marketplace (cards, gallery) and the shopping bag.
 // The parent sets the size/aspect ratio and must be `relative`. The photo is absolutely positioned so its own
 // size can never stretch the box: in normal flow a tall phone photo makes an aspect-ratio box grow to fit it.
+// object-contain shows the whole photo (nothing cropped or distorted); the sage background fills any leftover space.
 import { PlantIcon } from '@phosphor-icons/react'
 
 export function ListingImage({ src, alt = '' }) {
@@ -12,5 +13,5 @@ export function ListingImage({ src, alt = '' }) {
       </div>
     )
   }
-  return <img src={src} alt={alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+  return <img src={src} alt={alt} loading="lazy" className="absolute inset-0 h-full w-full bg-sage-50 object-contain" />
 }

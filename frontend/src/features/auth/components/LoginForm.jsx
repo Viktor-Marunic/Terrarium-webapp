@@ -3,7 +3,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '../schemas'
 import { useSignIn } from '../hooks'
-import { FormField } from '../../../components/common/FormField'
+import { AuthField } from './AuthField'
+import { PasswordField } from './PasswordField'
+import { AuthButtons } from './AuthButtons'
 
 export function LoginForm() {
   const signIn = useSignIn()
@@ -14,11 +16,19 @@ export function LoginForm() {
   } = useForm({ resolver: zodResolver(loginSchema) })
 
   return (
-    <form onSubmit={handleSubmit((values) => signIn.mutate(values))} className="space-y-4" noValidate>
-      <FormField label="Email" type="email" autoComplete="email" error={errors.email?.message} {...register('email')} />
-      <FormField
+    <form onSubmit={handleSubmit((values) => signIn.mutate(values))} className="space-y-5" noValidate>
+      <AuthField
+        label="Email address"
+        required
+        type="email"
+        autoComplete="email"
+        placeholder="you@example.com"
+        error={errors.email?.message}
+        {...register('email')}
+      />
+      <PasswordField
         label="Password"
-        type="password"
+        required
         autoComplete="current-password"
         error={errors.password?.message}
         {...register('password')}
@@ -28,13 +38,7 @@ export function LoginForm() {
           {signIn.error.message}
         </p>
       )}
-      <button
-        type="submit"
-        disabled={signIn.isPending}
-        className="w-full rounded-md bg-emerald-700 py-2 font-medium text-white transition-colors hover:bg-emerald-800 disabled:opacity-60"
-      >
-        {signIn.isPending ? 'Logging in…' : 'Log in'}
-      </button>
+      <AuthButtons label="Log in" pendingLabel="Logging in…" isPending={signIn.isPending} />
     </form>
   )
 }

@@ -9,6 +9,7 @@ import { ListingGallery } from '../features/marketplace/components/ListingGaller
 import { ListingDetails } from '../features/marketplace/components/ListingDetails'
 import { BookmarkButton } from '../features/bookmarks/components/BookmarkButton'
 import { AddToBagButton } from '../features/cart/components/AddToBagButton'
+import { avatarSrc } from '../features/profiles/avatar'
 
 export function ListingPage() {
   const { id } = useParams()
@@ -50,6 +51,8 @@ export function ListingPage() {
           listing={listing.data}
           isOwner={isOwner}
           buyAction={<AddToBagButton listingId={listing.data.id} variant="primary" />}
+          // Same picture as on their profile (uploaded avatar, or the one generated from their username).
+          sellerAvatarSrc={listing.data.seller ? avatarSrc(listing.data.seller) : undefined}
         />
       </div>
     </div>
