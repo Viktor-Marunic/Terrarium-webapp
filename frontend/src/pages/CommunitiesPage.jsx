@@ -1,14 +1,17 @@
-// /communities — one feed of posts from every community, filterable with ?c=<slug> (like Reddit's r/all + subreddits).
+// /communities — one feed of posts from every community, filterable with ?c=<slug> (like Reddit's r/all + subreddits)
+// and sortable with ?sort=top (default: newest first).
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useCommunities } from '../features/communities/hooks'
 import { CommunityFilter } from '../features/communities/components/CommunityFilter'
 import { CreatePostForm } from '../features/posts/components/CreatePostForm'
 import { PostList } from '../features/posts/components/PostList'
+import { SortToggle } from '../features/posts/components/SortToggle'
 
 export function CommunitiesPage() {
   const [searchParams] = useSearchParams()
   const activeSlug = searchParams.get('c')
+  const sort = searchParams.get('sort') === 'top' ? 'top' : 'new'
   const communities = useCommunities()
   const [isWriting, setIsWriting] = useState(false)
 
@@ -24,7 +27,7 @@ export function CommunitiesPage() {
         <h1 className="text-xl font-semibold text-stone-800">{active ? active.name : 'Communities'}</h1>
         <p className="text-sm text-stone-600">{active ? active.description : 'Latest posts from every community.'}</p>
       </header>
-      <CommunityFilter communities={communities.data} activeSlug={active?.slug} />
+      <CommunityFilter communities={communities.data} activeSlug={active?.slug} sort={sort} />
       {isWriting ? (
         <CreatePostForm
           communities={communities.data}
@@ -40,7 +43,8 @@ export function CommunitiesPage() {
           New post
         </button>
       )}
-      <PostList communityId={active?.id} />
+      <SortToggle communitySlug={active?.slug} sort={sort} />
+      <PostList communityId={active?.id} sort={sort} />
     </div>
   )
 }

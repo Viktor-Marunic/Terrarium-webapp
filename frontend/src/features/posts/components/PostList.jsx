@@ -1,9 +1,9 @@
-// Post feed (all communities, or one when communityId is set) with loading, error and empty states.
+// Post feed (all communities, or one when communityId is set), sorted 'new' or 'top', with loading, error and empty states.
 import { usePosts } from '../hooks'
 import { PostCard } from './PostCard'
 
-export function PostList({ communityId }) {
-  const posts = usePosts(communityId)
+export function PostList({ communityId, sort }) {
+  const posts = usePosts(communityId, sort)
 
   if (posts.isLoading) return <p className="text-stone-500">Loading posts…</p>
   if (posts.error) return <p className="text-red-600">Could not load posts: {posts.error.message}</p>

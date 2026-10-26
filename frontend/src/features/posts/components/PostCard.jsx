@@ -1,6 +1,8 @@
 // One post in a feed. The whole card opens the post page (the title link is stretched over the card).
 import { Link } from 'react-router-dom'
 import { ChatCircleIcon } from '@phosphor-icons/react'
+import { VoteButtons } from '../../votes/components/VoteButtons'
+import { myVoteOf } from '../../votes/score'
 import { PostMeta } from './PostMeta'
 
 export function PostCard({ post }) {
@@ -16,10 +18,16 @@ export function PostCard({ post }) {
         </Link>
       </h2>
       {post.body && <p className="mt-1 line-clamp-3 text-sm break-words whitespace-pre-line text-stone-700">{post.body}</p>}
-      <p className="mt-3 flex items-center gap-1 text-xs text-stone-500">
-        <ChatCircleIcon size={16} aria-hidden="true" />
-        {commentCount} {commentCount === 1 ? 'comment' : 'comments'}
-      </p>
+      <div className="mt-3 flex items-center gap-4">
+        {/* relative z-10 lifts the buttons above the stretched title link so votes don't open the post. */}
+        <div className="relative z-10">
+          <VoteButtons target="post" id={post.id} score={post.score} myVote={myVoteOf(post)} />
+        </div>
+        <p className="flex items-center gap-1 text-xs text-stone-500">
+          <ChatCircleIcon size={16} aria-hidden="true" />
+          {commentCount} {commentCount === 1 ? 'comment' : 'comments'}
+        </p>
+      </div>
     </article>
   )
 }

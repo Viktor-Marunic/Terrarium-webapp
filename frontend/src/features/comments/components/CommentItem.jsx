@@ -2,6 +2,8 @@
 import { useState } from 'react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { EditDeleteButtons } from '../../../components/common/EditDeleteButtons'
+import { VoteButtons } from '../../votes/components/VoteButtons'
+import { myVoteOf } from '../../votes/score'
 import { useCreateComment, useDeleteComment, useUpdateComment } from '../hooks'
 import { CommentForm } from './CommentForm'
 
@@ -57,7 +59,8 @@ export function CommentItem({ comment, postId, currentUserId, depth = 0 }) {
         <p className="mt-1 text-sm break-words whitespace-pre-line text-stone-800">{comment.body}</p>
       )}
 
-      <div className="mt-1 flex items-center gap-3">
+      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <VoteButtons target="comment" id={comment.id} score={comment.score} myVote={myVoteOf(comment)} size={14} />
         <button
           type="button"
           onClick={() => setMode(mode === 'reply' ? null : 'reply')}

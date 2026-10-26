@@ -2,17 +2,19 @@
 import { supabase } from '../../lib/supabase'
 
 // Columns every post view needs, including the embedded author and community.
-const POST_COLUMNS = 'id, author_id, type, title, body, created_at, author:profiles(username), community:communities(slug, name)'
+// votes(value) holds only the current user's own vote (RLS), used to highlight their arrow.
+const POST_COLUMNS =
+  'id, author_id, type, title, body, created_at, score, author:profiles(username), community:communities(slug, name), votes(value)'
 
 /**
- * Posts newest first, from every community or only one (pass communityId).
- * Each post includes { author: { username }, community: { slug, name }, comments: [{ count }] }.
+ * Posts from every community or only one (pass communityId), sorted 'new' (newest first) or 'top' (highest score).
+ * Each post includes { score, author: { username }, community: { slug, name }, comments: [{ count }], votes: [{ value }] }.
  */
-export async function listPosts(communityId) {
-  let query = supabase
-    .from('posts')
-    .select(`${POST_COLUMNS}, comments(count)`)
-    .order('created_at', { ascending: false })
+export async function listPosts(communityId, sort = 'new') {
+  let query = supabase.from('posts').select(`${POST_COLUMNS}, comments(count)`)
+  // Top ties are broken by newest first.
+  if (sort === 'top') query = query.order('score', { ascending: false })
+  query = query.order('created_at', { ascending: false })
   if (communityId) query = query.eq('community_id', communityId)
 
   const { data, error } = await query
