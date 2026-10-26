@@ -9,6 +9,8 @@ import { ProfilePage } from '../pages/ProfilePage'
 import { CommunitiesPage } from '../pages/CommunitiesPage'
 import { PostPage } from '../pages/PostPage'
 import { ShopPage } from '../pages/ShopPage'
+import { SellPage } from '../pages/SellPage'
+import { ListingPage } from '../pages/ListingPage'
 import { GuidePage } from '../pages/GuidePage'
 import { EventsPage } from '../pages/EventsPage'
 
@@ -33,6 +35,9 @@ export function App() {
             <Route path="communities" element={<CommunitiesPage />} />
             <Route path="posts/:id" element={<PostPage />} />
             <Route path="shop" element={<ShopPage />} />
+            {/* React Router ranks the static "new" above ":id", so /shop/new never loads a listing called "new". */}
+            <Route path="shop/new" element={<SellPage />} />
+            <Route path="shop/:id" element={<ListingPage />} />
             <Route path="guide" element={<GuidePage />} />
             <Route path="events" element={<EventsPage />} />
           </Route>
