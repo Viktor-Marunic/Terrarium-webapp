@@ -2,11 +2,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createPost, deletePost, getPost, listPosts, updatePost } from './api'
 
-/** All posts, or only one community's when communityId is given; sort is 'new' or 'top'. */
-export function usePosts(communityId, sort = 'new') {
+/** All posts, or only one community's / one author's when communityId / authorId is given; sort is 'new' or 'top'. */
+export function usePosts(communityId, sort = 'new', authorId) {
   return useQuery({
-    queryKey: ['posts', communityId ?? 'all', sort],
-    queryFn: () => listPosts(communityId, sort),
+    queryKey: ['posts', communityId ?? 'all', sort, authorId ?? 'everyone'],
+    queryFn: () => listPosts(communityId, sort, authorId),
   })
 }
 

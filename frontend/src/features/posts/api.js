@@ -8,14 +8,16 @@ const POST_COLUMNS =
 
 /**
  * Posts from every community or only one (pass communityId), sorted 'new' (newest first) or 'top' (highest score).
+ * Pass authorId to get only one user's posts (their profile).
  * Each post includes { score, author: { username }, community: { slug, name }, comments: [{ count }], votes: [{ value }] }.
  */
-export async function listPosts(communityId, sort = 'new') {
+export async function listPosts(communityId, sort = 'new', authorId) {
   let query = supabase.from('posts').select(`${POST_COLUMNS}, comments(count)`)
   // Top ties are broken by newest first.
   if (sort === 'top') query = query.order('score', { ascending: false })
   query = query.order('created_at', { ascending: false })
   if (communityId) query = query.eq('community_id', communityId)
+  if (authorId) query = query.eq('author_id', authorId)
 
   const { data, error } = await query
   if (error) throw error
