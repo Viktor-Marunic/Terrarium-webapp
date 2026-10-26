@@ -2,6 +2,7 @@
 // The community link sits above PostCard's full-card link (relative z-10) so both stay clickable.
 import { Link } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
+import { Avatar } from '../../profiles/components/Avatar'
 
 const typeStyles = {
   showcase: 'bg-emerald-100 text-emerald-800',
@@ -20,7 +21,9 @@ export function PostMeta({ post }) {
         </Link>
       )}
       <span className={`rounded-full px-2 py-0.5 font-medium capitalize ${typeStyles[post.type]}`}>{post.type}</span>
-      <span>@{post.author?.username ?? 'deleted'}</span>
+      <span className="flex items-center gap-1.5">
+        <Avatar profile={post.author} size={26} />@{post.author?.username ?? 'deleted'}
+      </span>
       <span aria-hidden="true">·</span>
       <time dateTime={post.created_at}>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</time>
     </div>

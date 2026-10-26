@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase'
 // Columns every post view needs, including the embedded author and community.
 // votes(value) holds only the current user's own vote (RLS), used to highlight their arrow.
 const POST_COLUMNS =
-  'id, author_id, type, title, body, created_at, score, author:profiles(username), community:communities(slug, name), votes(value)'
+  'id, author_id, type, title, body, created_at, score, author:profiles(username, avatar_url), community:communities(slug, name), votes(value)'
 
 /**
  * Posts from every community or only one (pass communityId), sorted 'new' (newest first) or 'top' (highest score).

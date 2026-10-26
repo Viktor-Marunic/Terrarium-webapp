@@ -10,7 +10,7 @@ import { navItems } from './navItems'
 export function Header() {
   return (
     // Top padding keeps the logo below the notch when the app runs full-screen (viewport-fit=cover in index.html).
-    <header className="sticky top-0 z-10 border-b border-stone-200 bg-paper pt-[env(safe-area-inset-top)]">
+    <header className="sticky top-0 z-30 border-b border-stone-200 bg-paper pt-[env(safe-area-inset-top)]">
       <div className="mx-auto max-w-5xl px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Slightly smaller below sm so logo, bell, bag and avatar still fit side by side on 320px phones. */}

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { EditDeleteButtons } from '../../../components/common/EditDeleteButtons'
+import { Avatar } from '../../profiles/components/Avatar'
 import { VoteButtons } from '../../votes/components/VoteButtons'
 import { myVoteOf } from '../../votes/score'
 import { useCreateComment, useDeleteComment, useUpdateComment } from '../hooks'
@@ -22,7 +23,9 @@ export function CommentItem({ comment, postId, currentUserId, depth = 0 }) {
   return (
     <li>
       <div className="flex flex-wrap items-center gap-x-2 text-xs text-stone-500">
-        <span className="font-medium text-stone-700">@{comment.author?.username ?? 'deleted'}</span>
+        <span className="flex items-center gap-1.5 font-medium text-stone-700">
+          <Avatar profile={comment.author} />@{comment.author?.username ?? 'deleted'}
+        </span>
         <span aria-hidden="true">·</span>
         <time dateTime={comment.created_at}>
           {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
