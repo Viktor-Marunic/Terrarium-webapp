@@ -9,6 +9,7 @@ import { PostMeta } from '../features/posts/components/PostMeta'
 import { EditPostForm } from '../features/posts/components/EditPostForm'
 import { CommentSection } from '../features/comments/components/CommentSection'
 import { VoteButtons } from '../features/votes/components/VoteButtons'
+import { PostBookmarkButton } from '../features/bookmarks/components/PostBookmarkButton'
 import { myVoteOf } from '../features/votes/score'
 
 export function PostPage() {
@@ -32,12 +33,12 @@ export function PostPage() {
     )
   }
 
-  const { title, body, community, author_id } = post.data
+  const { title, body, community, author_id, image_urls } = post.data
   const backTo = community ? `/communities?c=${community.slug}` : '/communities'
   // UI only; the database's RLS policies are what actually stop others from editing.
   const isOwner = session?.user.id === author_id
 
-  const handleDelete = () => deletePost.mutate(id, { onSuccess: () => navigate(backTo, { replace: true }) })
+  const handleDelete = () => deletePost.mutate({ id, imageUrls: image_urls }, { onSuccess: () => navigate(backTo, { replace: true }) })
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -52,6 +53,16 @@ export function PostPage() {
           <PostMeta post={post.data} />
           <h1 className="mt-2 text-xl font-semibold break-words text-stone-900">{title}</h1>
           {body && <p className="mt-3 break-words whitespace-pre-line text-stone-800">{body}</p>}
+          {image_urls.length > 0 && (
+            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+              {image_urls.map((url, index) => (
+                // A single photo spans the full width instead of leaving an empty half.
+                <li key={url} className={image_urls.length === 1 ? 'sm:col-span-2' : ''}>
+                  <img src={url} alt={`Photo ${index + 1} of ${title}`} className="w-full rounded-lg bg-sage-100 object-cover" />
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-stone-100 pt-3">
             <VoteButtons target="post" id={id} score={post.data.score} myVote={myVoteOf(post.data)} />
             {isOwner && (
@@ -62,6 +73,7 @@ export function PostPage() {
                 confirmMessage="Delete this post and all its comments? This cannot be undone."
               />
             )}
+            <PostBookmarkButton postId={id} className="ml-auto" />
           </div>
           {deletePost.error && <p className="mt-2 text-sm text-red-600">{deletePost.error.message}</p>}
         </article>

@@ -1,8 +1,8 @@
-// Photo picker for the listing form: an "Add photos" tile plus a preview of each photo with a remove button.
+// Photo picker for forms with photos (listings, posts): an "Add photos" tile plus a preview of each photo with a remove button.
 // Controlled (value, onChange) so react-hook-form's Controller can own the list; the Zod schema validates it.
 // Items are Files (newly picked) or URL strings (photos already uploaded, when editing).
 import { PlusIcon, XIcon } from '@phosphor-icons/react'
-import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES } from '../schemas'
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES } from '../../lib/images'
 
 // Preview URLs are cached per File so re-renders don't create new ones. Created lazily here instead of in an
 // effect, because StrictMode's effect re-run would revoke them while still shown. Revoked when a photo is removed;
@@ -14,7 +14,15 @@ function previewUrlFor(image) {
   return previewUrls.get(image)
 }
 
-export function ImagePicker({ value, onChange, error }) {
+/** react-hook-form's error for the list: a list-level one ("Add at least one photo") or one per bad file. */
+function messageOf(error) {
+  if (!error) return undefined
+  return error.message ?? error.find?.((fileError) => fileError)?.message
+}
+
+export function ImagePicker({ value, onChange, error, label = 'Photos' }) {
+  const message = messageOf(error)
+
   const handleAdd = (event) => {
     // Extra photos beyond the limit are dropped here; type/size problems are left for the schema to report.
     onChange([...value, ...event.target.files].slice(0, MAX_IMAGES))
@@ -34,7 +42,7 @@ export function ImagePicker({ value, onChange, error }) {
   return (
     <fieldset>
       <legend className="text-sm font-medium text-stone-700">
-        Photos <span className="font-normal text-stone-500">({value.length}/{MAX_IMAGES}, the first is the cover)</span>
+        {label} <span className="font-normal text-stone-500">({value.length}/{MAX_IMAGES}, the first is the cover)</span>
       </legend>
       <ul className="mt-1 grid grid-cols-3 gap-2 sm:grid-cols-5">
         {value.map((file, index) => (
@@ -67,7 +75,7 @@ export function ImagePicker({ value, onChange, error }) {
           </li>
         )}
       </ul>
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {message && <p className="mt-1 text-sm text-red-600">{message}</p>}
     </fieldset>
   )
 }

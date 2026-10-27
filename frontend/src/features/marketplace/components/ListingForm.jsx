@@ -6,13 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FormField } from '../../../components/common/FormField'
 import { listingCategories, listingConditions, listingSchema } from '../schemas'
 import { useCreateListing, useUpdateListing } from '../hooks'
-import { ImagePicker } from './ImagePicker'
-
-/** First message for the photo list: a list-level one ("Add at least one photo") or the first bad file's. */
-function imagesError(error) {
-  if (!error) return undefined
-  return error.message ?? error.find?.((fileError) => fileError)?.message
-}
+import { ImagePicker } from '../../../components/common/ImagePicker'
 
 const emptyValues = { images: [], title: '', category: '', condition: '', price: NaN, description: '', contactInfo: '' }
 
@@ -55,7 +49,7 @@ export function ListingForm({ listing, onSaved, onCancel }) {
         name="images"
         control={control}
         render={({ field, fieldState }) => (
-          <ImagePicker value={field.value} onChange={field.onChange} error={imagesError(fieldState.error)} />
+          <ImagePicker value={field.value} onChange={field.onChange} error={fieldState.error} />
         )}
       />
       <FormField label="Title" placeholder="e.g. Woodland starter kit" error={errors.title?.message} {...register('title')} />

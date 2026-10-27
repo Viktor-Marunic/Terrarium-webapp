@@ -6,8 +6,8 @@ import { feedPath } from '../../../lib/utils'
 function chipClass(isActive) {
   return `shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
     isActive
-      ? 'border-emerald-700 bg-emerald-700 text-white'
-      : 'border-stone-300 bg-white text-stone-700 hover:bg-stone-50'
+      ? 'border-forest-700 bg-forest-700 text-white'
+      : 'border-stone-300 bg-paper text-stone-700 hover:bg-white'
   }`
 }
 

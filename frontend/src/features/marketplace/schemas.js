@@ -1,6 +1,7 @@
 // Zod schema for the sell/edit listing form, plus the fixed category/condition lists.
 // Limits and values mirror the check constraints on the listings table and the listing-images bucket.
 import { z } from 'zod'
+import { imageSchema, MAX_IMAGES } from '../../lib/images'
 
 // `value` is what the database stores; `label` is what users see.
 export const listingCategories = [
@@ -21,20 +22,9 @@ export function labelFor(options, value) {
   return options.find((option) => option.value === value)?.label ?? value
 }
 
-export const MAX_IMAGES = 5
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024
-export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
-
-// A photo is either a newly picked File, or (when editing) the URL string of one that's already uploaded.
-// Checked with refines instead of z.union, so a bad file still shows its own message instead of "Invalid input".
-const listingImage = z
-  .custom((image) => typeof image === 'string' || image instanceof File, 'Invalid photo')
-  .refine((image) => typeof image === 'string' || ACCEPTED_IMAGE_TYPES.includes(image.type), 'Photos must be JPG, PNG or WebP')
-  .refine((image) => typeof image === 'string' || image.size <= MAX_IMAGE_BYTES, 'Each photo must be 5 MB or smaller')
-
 /** Used by both the sell form and the edit form. */
 export const listingSchema = z.object({
-  images: z.array(listingImage).min(1, 'Add at least one photo').max(MAX_IMAGES, `At most ${MAX_IMAGES} photos`),
+  images: z.array(imageSchema).min(1, 'Add at least one photo').max(MAX_IMAGES, `At most ${MAX_IMAGES} photos`),
   title: z.string().trim().min(3, 'At least 3 characters').max(100, 'At most 100 characters'),
   category: z.enum(
     listingCategories.map((option) => option.value),

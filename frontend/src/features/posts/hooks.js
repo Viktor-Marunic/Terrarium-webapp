@@ -1,12 +1,16 @@
 // React hooks for posts.
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createPost, deletePost, getPost, listPosts, updatePost } from './api'
 
-/** All posts, or only one community's / one author's when communityId / authorId is given; sort is 'new' or 'top'. */
-export function usePosts(communityId, sort = 'new', authorId) {
+/**
+ * One page of the feed: { posts, totalCount }. Filters by communityId / authorId when given; sort is 'new' or 'top';
+ * page starts at 0. Keeps showing the previous page while the next one loads, so pagination doesn't flash.
+ */
+export function usePosts({ communityId, sort = 'new', authorId, page = 0 } = {}) {
   return useQuery({
-    queryKey: ['posts', communityId ?? 'all', sort, authorId ?? 'everyone'],
-    queryFn: () => listPosts(communityId, sort, authorId),
+    queryKey: ['posts', communityId ?? 'all', sort, authorId ?? 'everyone', page],
+    queryFn: () => listPosts({ communityId, sort, authorId, page }),
+    placeholderData: keepPreviousData,
   })
 }
 

@@ -1,7 +1,8 @@
-// /communities — one feed of posts from every community, filterable with ?c=<slug> (like Reddit's r/all + subreddits)
-// and sortable with ?sort=top (default: newest first).
+// /communities — one feed of posts from every community (layout from the TerraSpace Figma), filterable with ?c=<slug>
+// (like Reddit's r/all + subreddits) and sortable with ?sort=top (default: newest first).
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { PlusIcon } from '@phosphor-icons/react'
 import { useCommunities } from '../features/communities/hooks'
 import { CommunityFilter } from '../features/communities/components/CommunityFilter'
 import { CreatePostForm } from '../features/posts/components/CreatePostForm'
@@ -22,28 +23,28 @@ export function CommunitiesPage() {
   const active = communities.data.find((community) => community.slug === activeSlug)
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
-      <header>
-        <h1 className="text-xl font-semibold text-stone-800">{active ? active.name : 'Communities'}</h1>
-        <p className="text-sm text-stone-600">{active ? active.description : 'Latest posts from every community.'}</p>
+    <div className="mx-auto max-w-2xl space-y-5">
+      {/* flex-wrap: on very narrow phones the button drops under the heading instead of overflowing. */}
+      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+        <h1 className="font-display text-3xl text-forest-800">{active ? active.name : 'Community'}</h1>
+        {!isWriting && (
+          <button
+            type="button"
+            onClick={() => setIsWriting(true)}
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-forest-700 px-4 py-2.5 text-sm font-medium text-white transition-[background-color,scale] hover:bg-forest-800 motion-safe:active:scale-[0.97]"
+          >
+            <PlusIcon size={18} aria-hidden="true" />
+            Start a discussion
+          </button>
+        )}
       </header>
-      <CommunityFilter communities={communities.data} activeSlug={active?.slug} sort={sort} />
-      {isWriting ? (
-        <CreatePostForm
-          communities={communities.data}
-          defaultCommunityId={active?.id}
-          onDone={() => setIsWriting(false)}
-        />
-      ) : (
-        <button
-          type="button"
-          onClick={() => setIsWriting(true)}
-          className="w-full rounded-md bg-emerald-700 py-2 font-medium text-white hover:bg-emerald-800"
-        >
-          New post
-        </button>
+      {active && <p className="-mt-2 text-sm text-stone-600">{active.description}</p>}
+
+      {isWriting && (
+        <CreatePostForm communities={communities.data} defaultCommunityId={active?.id} onDone={() => setIsWriting(false)} />
       )}
       <SortToggle communitySlug={active?.slug} sort={sort} />
+      <CommunityFilter communities={communities.data} activeSlug={active?.slug} sort={sort} />
       <PostList communityId={active?.id} sort={sort} />
     </div>
   )

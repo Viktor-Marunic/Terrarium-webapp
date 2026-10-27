@@ -1,13 +1,9 @@
-// The small line above a post: community link, type badge, author and age. Shared by the feed card and the post page.
-// The community link sits above PostCard's full-card link (relative z-10) so both stay clickable.
+// The small line above a post on the post page: community link, type badge, author and age.
+// (Feed cards use their own layout from the Figma, see PostCard.)
 import { Link } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
 import { Avatar } from '../../profiles/components/Avatar'
-
-const typeStyles = {
-  showcase: 'bg-emerald-100 text-emerald-800',
-  question: 'bg-amber-100 text-amber-800',
-}
+import { PostTypeBadge } from './PostTypeBadge'
 
 export function PostMeta({ post }) {
   return (
@@ -20,7 +16,7 @@ export function PostMeta({ post }) {
           c/{post.community.slug}
         </Link>
       )}
-      <span className={`rounded-full px-2 py-0.5 font-medium capitalize ${typeStyles[post.type]}`}>{post.type}</span>
+      <PostTypeBadge type={post.type} />
       <span className="flex items-center gap-1.5">
         <Avatar profile={post.author} size={26} />@{post.author?.username ?? 'deleted'}
       </span>

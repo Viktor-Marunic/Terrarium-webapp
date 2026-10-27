@@ -11,8 +11,8 @@ export function ProfilePage() {
   const { session } = useSession()
   const userId = session?.user.id
   const profile = useProfile(userId)
-  // Same query (and cache entry) as the PostList below, so the count costs no extra request.
-  const myPosts = usePosts(undefined, 'new', userId)
+  // Same query (and cache entry) as the PostList's first page, so on page 1 the count costs no extra request.
+  const myPosts = usePosts({ authorId: userId })
   const badges = useUserBadges(userId)
   const signOut = useSignOut()
 
@@ -25,7 +25,7 @@ export function ProfilePage() {
       {profile.data && (
         <ProfileCard
           profile={profile.data}
-          postCount={myPosts.data?.length}
+          postCount={myPosts.data?.totalCount}
           badges={badges.data?.filter((b) => b.earned_at)}
         />
       )}

@@ -1,5 +1,6 @@
 // Supabase queries/mutations for marketplace listings and their photos (listing-images bucket).
 import { supabase } from '../../lib/supabase'
+import { removeImages, uploadImages } from '../../lib/images'
 
 const BUCKET = 'listing-images'
 export const LISTINGS_PAGE_SIZE = 12
@@ -34,49 +35,7 @@ export async function getListing(id) {
   return data
 }
 
-/** Turns a public URL back into its storage path ({user_id}/{file}), which remove() needs. */
-function pathFromPublicUrl(url) {
-  return url.split(`/${BUCKET}/`)[1]
-}
-
-async function removeListingImages(urls) {
-  if (urls.length === 0) return
-  const { error } = await supabase.storage.from(BUCKET).remove(urls.map(pathFromPublicUrl))
-  if (error) throw error
-}
-
-/**
- * Turns the form's photo list into public URLs, in the same order: URL strings (already uploaded) are kept,
- * Files are uploaded to {user_id}/{uuid}.{ext} (the storage policy only allows the user's own folder).
- * @returns {Promise<{ imageUrls: string[], uploadedUrls: string[] }>} uploadedUrls = only the new ones, for cleanup.
- */
-async function resolveImageUrls(images) {
-  const { data: sessionData } = await supabase.auth.getSession()
-  const userId = sessionData.session?.user.id
-  if (!userId) throw new Error('You need to be logged in to do that')
-
-  const imageUrls = []
-  const uploadedUrls = []
-  try {
-    for (const image of images) {
-      if (typeof image === 'string') {
-        imageUrls.push(image)
-        continue
-      }
-      const path = `${userId}/${crypto.randomUUID()}.${image.name.split('.').pop().toLowerCase()}`
-      const { error } = await supabase.storage.from(BUCKET).upload(path, image, { contentType: image.type })
-      if (error) throw error
-      const url = supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
-      imageUrls.push(url)
-      uploadedUrls.push(url)
-    }
-  } catch (error) {
-    // One upload failed: don't leave the ones before it orphaned in storage.
-    await removeListingImages(uploadedUrls).catch(() => {})
-    throw error
-  }
-  return { imageUrls, uploadedUrls }
-}
+const removeListingImages = (urls) => removeImages(BUCKET, urls)
 
 /** Form values → listings columns. */
 function toListingRow({ title, category, condition, price, description, contactInfo }, imageUrls) {
@@ -88,7 +47,7 @@ function toListingRow({ title, category, condition, price, description, contactI
  * @param {{ images: File[], title: string, category: string, condition: string, price: number, description: string, contactInfo: string }} values
  */
 export async function createListing(values) {
-  const { imageUrls, uploadedUrls } = await resolveImageUrls(values.images)
+  const { imageUrls, uploadedUrls } = await uploadImages(BUCKET, values.images)
   const { data, error } = await supabase.from('listings').insert(toListingRow(values, imageUrls)).select().single()
   if (error) {
     // Don't leave orphaned photos in storage when the row itself is rejected.
@@ -104,7 +63,7 @@ export async function createListing(values) {
  * @param {{ id: string, previousImageUrls: string[], images: (string | File)[] } & object} values same fields as createListing
  */
 export async function updateListing({ id, previousImageUrls, ...values }) {
-  const { imageUrls, uploadedUrls } = await resolveImageUrls(values.images)
+  const { imageUrls, uploadedUrls } = await uploadImages(BUCKET, values.images)
   const { data, error } = await supabase.from('listings').update(toListingRow(values, imageUrls)).eq('id', id).select().single()
   if (error) {
     await removeListingImages(uploadedUrls).catch(() => {})
