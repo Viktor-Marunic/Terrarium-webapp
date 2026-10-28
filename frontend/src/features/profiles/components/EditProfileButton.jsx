@@ -59,9 +59,10 @@ export function EditProfileButton({ profile }) {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex shrink-0 items-center gap-1.5 rounded-lg border border-stone-300 bg-paper px-3 py-2 text-sm font-medium text-forest-800 transition-colors hover:border-forest-700"
+        // Same style as the other page-header buttons ("Sell an item", "Create an event", "Start a discussion").
+        className="flex shrink-0 items-center gap-2 rounded-lg bg-forest-700 px-4 py-2.5 text-sm font-medium text-white transition-[background-color,scale] hover:bg-forest-800 motion-safe:active:scale-[0.97]"
       >
-        <PencilSimpleIcon size={16} aria-hidden="true" />
+        <PencilSimpleIcon size={18} aria-hidden="true" />
         Edit profile
       </button>
       <Sheet open={isOpen} onOpenChange={setIsOpen} title="Edit profile" description="Change your name, location and bio.">

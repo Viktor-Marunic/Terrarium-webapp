@@ -1,4 +1,4 @@
-// The "Activity" chip row on the profile (My posts · Saved · Listings). The choice lives in the URL
+// The "Activity" chip row on the profile (My posts · My events · Saved · Listings). The choice lives in the URL
 // (?tab=value), so it survives refresh and back; switching tabs drops ?page= so each tab starts on page 1.
 import { FilterChipLink } from '../../../components/common/FilterChipLink'
 import { activityTabs } from '../activityTabs'

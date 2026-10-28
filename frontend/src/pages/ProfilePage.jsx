@@ -1,5 +1,5 @@
 // /profile — the logged-in user's own profile (TerraSpace mockup): "Profile" + Edit profile, the profile card
-// with stats, the Activity tabs (?tab=: my posts, saved, listings), achievements, and log out.
+// with stats, the Activity tabs (?tab=: my posts, my events, saved, listings), achievements, and log out.
 // Composes several features: the stats and tab contents come from posts, marketplace, events and bookmarks.
 import { useSearchParams } from 'react-router-dom'
 import { useSession, useSignOut } from '../features/auth/hooks'
@@ -14,6 +14,7 @@ import { PostList } from '../features/posts/components/PostList'
 import { useProfileListings } from '../features/marketplace/hooks'
 import { ListingTiles } from '../features/marketplace/components/ListingTiles'
 import { useAttendingEventCount } from '../features/events/hooks'
+import { HostedEventList } from '../features/events/components/HostedEventList'
 import { useBookmarkedListingIds, useSavedPostIds } from '../features/bookmarks/hooks'
 
 /** Content of the "Saved" tab: saved posts, then saved listings. Waits for the saved ids before listing them. */
@@ -78,6 +79,7 @@ export function ProfilePage() {
         <h2 className="font-display text-2xl text-forest-800">Activity</h2>
         <ActivityTabs activeTab={tab} />
         {tab === 'posts' && <PostList authorId={userId} emptyText="You haven't posted anything yet." />}
+        {tab === 'events' && <HostedEventList hostId={userId} emptyText="You haven't hosted any events yet." />}
         {tab === 'saved' && <SavedActivity />}
         {tab === 'listings' && <ListingTiles sellerId={userId} emptyText="You haven't listed anything for sale yet." />}
       </section>
@@ -89,7 +91,7 @@ export function ProfilePage() {
         type="button"
         onClick={() => signOut.mutate()}
         disabled={signOut.isPending}
-        className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm text-stone-700 hover:border-stone-400 disabled:opacity-60"
+        className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-60"
       >
         {signOut.isPending ? 'Logging out…' : 'Log out'}
       </button>

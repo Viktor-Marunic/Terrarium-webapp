@@ -26,6 +26,17 @@ export async function listEvents(type) {
   return data
 }
 
+/** Every event one user has hosted, past ones included, newest first (the profile's "My events" tab). */
+export async function listHostedEvents(hostId) {
+  const { data, error } = await supabase
+    .from('events')
+    .select(`${EVENT_COLUMNS}, going:event_attendees(count)`)
+    .eq('host_id', hostId)
+    .order('starts_at', { ascending: false })
+  if (error) throw error
+  return data
+}
+
 /** One event with everyone going ({ user_id, profile: { username, avatar_url } }), or null if it doesn't exist. */
 export async function getEvent(id) {
   const { data, error } = await supabase

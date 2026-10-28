@@ -18,7 +18,7 @@ export function MyAvatarIcon({ size = 24, weight }) {
       alt=""
       width={size}
       height={size}
-      className={`rounded-full bg-stone-100 ${weight === 'fill' ? 'ring-2 ring-emerald-600' : ''}`}
+      className={`rounded-full bg-stone-100 ${weight === 'fill' ? 'ring-2 ring-forest-700' : ''}`}
     />
   )
 }

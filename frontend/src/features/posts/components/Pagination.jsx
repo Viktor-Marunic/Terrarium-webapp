@@ -4,8 +4,11 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react'
 import { pageNumbers } from '../../../lib/utils'
 
-const buttonClass =
-  'flex h-10 min-w-10 items-center justify-center gap-1 rounded-full border border-stone-300 bg-paper px-3 text-sm font-medium text-stone-700 transition-colors hover:bg-white'
+// Shape shared by every pager button; colours are separate so the current page never gets two backgrounds
+// (with both, Tailwind's CSS order decides which wins, and the off-white one did).
+const baseClass = 'flex h-10 min-w-10 items-center justify-center gap-1 rounded-full border px-3 text-sm font-medium transition-colors'
+const buttonClass = `${baseClass} border-stone-300 bg-paper text-stone-700 hover:bg-white`
+const currentClass = `${baseClass} border-forest-700 bg-forest-700 text-white hover:bg-forest-800`
 
 /** page is 1-based; shownCount is how many posts are on this page. */
 export function Pagination({ page, totalPages, shownCount, totalCount }) {
@@ -46,9 +49,7 @@ export function Pagination({ page, totalPages, shownCount, totalCount }) {
                   to={{ search: searchFor(number) }}
                   aria-current={number === page ? 'page' : undefined}
                   aria-label={`Page ${number}`}
-                  className={
-                    number === page ? `${buttonClass} border-forest-700 bg-forest-700 text-white hover:bg-forest-800` : buttonClass
-                  }
+                  className={number === page ? currentClass : buttonClass}
                 >
                   {number}
                 </Link>
