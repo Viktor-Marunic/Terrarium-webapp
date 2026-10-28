@@ -1,8 +1,9 @@
 // Creates an account; the database trigger creates the matching profile with the chosen username.
-// The username field previews the user's initials as they type, like the mockup.
+// The username field previews the blobatar the profile will get, using the same Avatar as the profile page.
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckIcon } from '@phosphor-icons/react'
+import { Avatar } from '../../profiles/components/Avatar'
 import { signUpSchema } from '../schemas'
 import { useSignUp } from '../hooks'
 import { AuthField } from './AuthField'
@@ -18,7 +19,7 @@ export function SignUpForm() {
     formState: { errors },
   } = useForm({ resolver: zodResolver(signUpSchema), defaultValues: { username: '', acceptTerms: false } })
   // useWatch (not watch()) so only this value re-renders the preview and the React Compiler lint stays happy.
-  const initials = useWatch({ control, name: 'username' }).trim().slice(0, 2).toUpperCase()
+  const username = useWatch({ control, name: 'username' }).trim()
 
   // Email confirmation is off, so sign-up logs the user in directly and LoginPage redirects home.
   return (
@@ -32,12 +33,16 @@ export function SignUpForm() {
         hint="Your profile icon is created from your username."
         error={errors.username?.message}
         leading={
-          <span
-            aria-hidden="true"
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sage-100 text-xs font-semibold text-forest-800"
-          >
-            {initials || '?'}
-          </span>
+          username ? (
+            <Avatar profile={{ username }} size={32} />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sage-100 text-xs font-semibold text-forest-800"
+            >
+              ?
+            </span>
+          )
         }
         {...register('username')}
       />
