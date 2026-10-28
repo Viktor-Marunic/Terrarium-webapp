@@ -9,8 +9,14 @@ import {
   joinEvent,
   leaveEvent,
   listEvents,
+  listHostedEvents,
   updateEvent,
 } from './api'
+
+/** Every event a user has hosted (profile). Keyed under 'events' so creating, editing or deleting refreshes it. */
+export function useHostedEvents(hostId) {
+  return useQuery({ queryKey: ['events', 'hosted', hostId], queryFn: () => listHostedEvents(hostId), enabled: Boolean(hostId) })
+}
 
 /** Upcoming events, all or one type. */
 export function useEvents(type) {

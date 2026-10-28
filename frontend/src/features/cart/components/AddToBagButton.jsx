@@ -1,5 +1,5 @@
 // "Add to bag" for a listing, used on shop cards (variant="card") and the product page (variant="primary").
-// Switches to "In your bag" once added. Callers don't render it for the seller's own or sold listings.
+// Switches to "Item in cart" once added. Callers don't render it for the seller's own or sold listings.
 // relative z-10 lifts it above the card's stretched link so clicking it doesn't open the product page.
 import { CheckIcon, PlusIcon } from '@phosphor-icons/react'
 import { useAddToCart, useCartItems } from '../hooks'
@@ -26,7 +26,7 @@ export function AddToBagButton({ listingId, variant = 'card' }) {
         }`}
       >
         {isInBag ? <CheckIcon size={18} aria-hidden="true" /> : <PlusIcon size={18} aria-hidden="true" />}
-        {isInBag ? 'In your bag' : addToCart.isPending ? 'Adding…' : 'Add to bag'}
+        {isInBag ? 'Item in cart' : addToCart.isPending ? 'Adding…' : 'Add to bag'}
       </button>
       {addToCart.error && <p className="relative z-10 mt-1 text-xs text-red-600">{addToCart.error.message}</p>}
     </>
