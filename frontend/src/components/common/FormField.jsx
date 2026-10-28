@@ -5,7 +5,7 @@ export function FormField({ label, error, as: Control = 'input', ...inputProps }
     <label className="block text-left">
       <span className="text-sm font-medium text-stone-700">{label}</span>
       <Control
-        className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none"
+        className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 focus:border-forest-700 focus:outline-none"
         aria-invalid={Boolean(error)}
         {...inputProps}
       />

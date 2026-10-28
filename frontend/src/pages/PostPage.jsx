@@ -53,10 +53,12 @@ export function PostPage() {
         <EditPostForm post={post.data} onDone={() => setIsEditing(false)} />
       ) : (
         <article className="rounded-lg bg-white p-4 shadow-sm">
-          <div className="flex items-center justify-between gap-3">
+          {/* On phones the info wraps onto two lines, so the icons sit on the first line instead of between them. */}
+          <div className="flex items-start justify-between gap-3 sm:items-center">
             <PostMeta post={post.data} />
             {isOwner && (
               <EditDeleteButtons
+                iconsOnMobile
                 onEdit={() => setIsEditing(true)}
                 onDelete={handleDelete}
                 isDeleting={deletePost.isPending}

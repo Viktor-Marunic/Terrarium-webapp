@@ -58,7 +58,7 @@ export function CreatePostForm({ communities, defaultCommunityId = '', onDone })
         <button
           type="submit"
           disabled={createPost.isPending}
-          className="flex-1 rounded-md bg-emerald-700 py-2 font-medium text-white hover:bg-emerald-800 disabled:opacity-60"
+          className="flex-1 rounded-md bg-forest-700 py-2 font-medium text-white hover:bg-forest-800 disabled:opacity-60"
         >
           {createPost.isPending ? 'Posting…' : 'Post'}
         </button>

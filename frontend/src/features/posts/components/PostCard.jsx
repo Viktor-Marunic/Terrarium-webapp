@@ -1,5 +1,5 @@
-// One post in a feed (TerraSpace Figma): title, excerpt and cover photo (if any), author, then community, type,
-// comments, votes and the bookmark.
+// One post in a feed (TerraSpace Figma): title, excerpt and cover photo (if any), author, then votes, comments,
+// community and the bookmark. The post type only shows on the post page.
 // The whole card opens the post page (the title link is stretched over the card).
 import { Link } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
@@ -8,7 +8,6 @@ import { Avatar } from '../../profiles/components/Avatar'
 import { PostBookmarkButton } from '../../bookmarks/components/PostBookmarkButton'
 import { VoteButtons } from '../../votes/components/VoteButtons'
 import { myVoteOf } from '../../votes/score'
-import { PostTypeBadge } from './PostTypeBadge'
 
 export function PostCard({ post }) {
   const commentCount = post.comments?.[0]?.count ?? 0
@@ -39,22 +38,22 @@ export function PostCard({ post }) {
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
-        {/* relative z-10 lifts the community link and votes above the stretched title link so they stay clickable. */}
+        {/* relative z-10 lifts the votes and community link above the stretched title link so they stay clickable. */}
+        {/* Sage pills behind votes, comments and the bookmark, matching the post page. */}
+        <div className="relative z-10 rounded-full bg-sage-100 px-1 py-0.5">
+          <VoteButtons target="post" id={post.id} score={post.score} myVote={myVoteOf(post)} size={16} />
+        </div>
+        <span className="flex items-center gap-1 rounded-full bg-sage-100 px-2.5 py-1.5 font-semibold text-stone-600">
+          <ChatCircleIcon size={16} aria-hidden="true" />
+          {commentCount}
+          <span className="sr-only">{commentCount === 1 ? 'comment' : 'comments'}</span>
+        </span>
         {post.community && (
           <Link to={`/communities?c=${post.community.slug}`} className="relative z-10 font-medium text-forest-700 hover:underline">
             {post.community.name}
           </Link>
         )}
-        <PostTypeBadge type={post.type} />
-        <span className="flex items-center gap-1 text-stone-500">
-          <ChatCircleIcon size={16} aria-hidden="true" />
-          {commentCount}
-          <span className="sr-only">{commentCount === 1 ? 'comment' : 'comments'}</span>
-        </span>
-        <div className="relative z-10">
-          <VoteButtons target="post" id={post.id} score={post.score} myVote={myVoteOf(post)} size={16} />
-        </div>
-        <PostBookmarkButton postId={post.id} className="ml-auto" />
+        <PostBookmarkButton postId={post.id} className="ml-auto bg-sage-100" />
       </div>
     </article>
   )

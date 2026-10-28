@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from '../features/auth/components/RequireAuth'
 import { AppLayout } from '../components/layout/AppLayout'
-import { HomePage } from '../pages/HomePage'
 import { LoginPage } from '../pages/LoginPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { CommunitiesPage } from '../pages/CommunitiesPage'
@@ -34,7 +33,8 @@ export function App() {
               </RequireAuth>
             }
           >
-            <Route index element={<HomePage />} />
+            {/* No home page: "/" (after login, the logo, unknown URLs) opens the community feed. */}
+            <Route index element={<Navigate to="/communities" replace />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="communities" element={<CommunitiesPage />} />
             <Route path="posts/:id" element={<PostPage />} />

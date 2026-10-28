@@ -91,7 +91,7 @@ export function ProfilePage() {
         type="button"
         onClick={() => signOut.mutate()}
         disabled={signOut.isPending}
-        className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-60"
+        className="rounded-lg bg-root-700 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-root-800 disabled:opacity-60"
       >
         {signOut.isPending ? 'Logging out…' : 'Log out'}
       </button>

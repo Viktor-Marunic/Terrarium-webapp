@@ -17,6 +17,9 @@
 
   /* Earthy brown for the root-shaped comment thread lines. */
   --color-root: #9a7b5c;
+  /* Deeper shades of the root brown for filled buttons; white text on plain root is too low-contrast. */
+  --color-root-700: #7a5c42;
+  --color-root-800: #63492f;
 
   /* Warm page background, and a lighter off-white for cards, header and footer. */
   --color-cream: #f4f1ea;
