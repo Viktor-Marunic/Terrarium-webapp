@@ -4,9 +4,9 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { FormField } from '../../../components/common/FormField'
+import { CoverPhotoField } from '../../../components/common/CoverPhotoField'
 import { eventSchema, eventTypes } from '../schemas'
 import { useCreateEvent, useUpdateEvent } from '../hooks'
-import { EventImageField } from './EventImageField'
 
 const emptyValues = {
   image: null, title: '', type: '', date: '', startTime: '', endTime: '',
@@ -51,7 +51,7 @@ export function EventForm({ event, onSaved, onCancel }) {
         name="image"
         control={control}
         render={({ field, fieldState }) => (
-          <EventImageField value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
+          <CoverPhotoField value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
         )}
       />
       <FormField label="Title" placeholder="e.g. Cuttings & coffee at Dokk1" error={errors.title?.message} {...register('title')} />

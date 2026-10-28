@@ -11,7 +11,10 @@ import { ShopPage } from '../pages/ShopPage'
 import { SellPage } from '../pages/SellPage'
 import { ListingPage } from '../pages/ListingPage'
 import { EditListingPage } from '../pages/EditListingPage'
+import { GuidesPage } from '../pages/GuidesPage'
 import { GuidePage } from '../pages/GuidePage'
+import { CreateGuidePage } from '../pages/CreateGuidePage'
+import { EditGuidePage } from '../pages/EditGuidePage'
 import { EventsPage } from '../pages/EventsPage'
 import { EventPage } from '../pages/EventPage'
 import { CreateEventPage } from '../pages/CreateEventPage'
@@ -43,7 +46,10 @@ export function App() {
             <Route path="shop/new" element={<SellPage />} />
             <Route path="shop/:id" element={<ListingPage />} />
             <Route path="shop/:id/edit" element={<EditListingPage />} />
-            <Route path="guide" element={<GuidePage />} />
+            <Route path="guide" element={<GuidesPage />} />
+            <Route path="guide/new" element={<CreateGuidePage />} />
+            <Route path="guide/:id" element={<GuidePage />} />
+            <Route path="guide/:id/edit" element={<EditGuidePage />} />
             <Route path="events" element={<EventsPage />} />
             <Route path="events/new" element={<CreateEventPage />} />
             <Route path="events/:id" element={<EventPage />} />

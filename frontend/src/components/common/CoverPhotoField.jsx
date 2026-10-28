@@ -1,7 +1,7 @@
-// Optional single event photo for the event form: an "Add a photo" tile, or a preview with a remove button.
+// Optional single cover photo (event and guide forms): an "Add a photo" tile, or a preview with a remove button.
 // Controlled (value = null | File | URL string, onChange) for react-hook-form's Controller; the Zod schema validates it.
 import { ImageIcon, XIcon } from '@phosphor-icons/react'
-import { ACCEPTED_IMAGE_TYPES } from '../schemas'
+import { ACCEPTED_IMAGE_TYPES } from '../../lib/images'
 
 // Preview URLs cached per File so re-renders don't create new ones (same approach as the listing ImagePicker).
 const previewUrls = new WeakMap()
@@ -11,7 +11,7 @@ function previewUrlFor(image) {
   return previewUrls.get(image)
 }
 
-export function EventImageField({ value, onChange, error }) {
+export function CoverPhotoField({ value, onChange, error }) {
   const handleRemove = () => {
     if (previewUrls.has(value)) URL.revokeObjectURL(previewUrls.get(value))
     onChange(null)
@@ -25,7 +25,7 @@ export function EventImageField({ value, onChange, error }) {
       <div className="relative mt-1 aspect-[5/2] overflow-hidden rounded-md">
         {value ? (
           <>
-            <img src={previewUrlFor(value)} alt="Event photo preview" className="h-full w-full bg-sage-50 object-contain" />
+            <img src={previewUrlFor(value)} alt="Photo preview" className="h-full w-full bg-sage-50 object-contain" />
             <button
               type="button"
               onClick={handleRemove}
