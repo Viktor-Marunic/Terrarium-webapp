@@ -15,6 +15,9 @@
   --color-sage-200: #cfdbc9;
   --color-sage-600: #6f8c76;
 
+  /* Earthy brown for the root-shaped comment thread lines. */
+  --color-root: #9a7b5c;
+
   /* Warm page background, and a lighter off-white for cards, header and footer. */
   --color-cream: #f4f1ea;
   --color-paper: #fdfcf8;

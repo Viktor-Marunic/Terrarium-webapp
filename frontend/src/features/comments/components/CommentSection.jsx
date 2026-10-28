@@ -13,10 +13,8 @@ export function CommentSection({ postId }) {
   const tree = useMemo(() => buildCommentTree(comments.data ?? []), [comments.data])
 
   return (
-    <section aria-labelledby="comments-heading" className="space-y-4">
-      <h2 id="comments-heading" className="font-semibold text-stone-800">
-        Comments{comments.data ? ` (${comments.data.length})` : ''}
-      </h2>
+    // No visible heading: the post page shows the comment count next to the votes instead.
+    <section aria-label="Comments" className="space-y-4">
       <CommentForm
         label="Add a comment"
         submitLabel="Comment"

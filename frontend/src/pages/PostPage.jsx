@@ -1,13 +1,14 @@
 // /posts/:id — one post in full, with its comment thread below. The author can edit or delete it here.
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeftIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ChatCircleIcon } from '@phosphor-icons/react'
 import { EditDeleteButtons } from '../components/common/EditDeleteButtons'
 import { useSession } from '../features/auth/hooks'
 import { useDeletePost, usePost } from '../features/posts/hooks'
 import { PostMeta } from '../features/posts/components/PostMeta'
 import { EditPostForm } from '../features/posts/components/EditPostForm'
 import { CommentSection } from '../features/comments/components/CommentSection'
+import { useComments } from '../features/comments/hooks'
 import { VoteButtons } from '../features/votes/components/VoteButtons'
 import { PostBookmarkButton } from '../features/bookmarks/components/PostBookmarkButton'
 import { myVoteOf } from '../features/votes/score'
@@ -18,6 +19,8 @@ export function PostPage() {
   const { session } = useSession()
   const post = usePost(id)
   const deletePost = useDeletePost()
+  // Same cached query as CommentSection, so the count updates as soon as a comment is added.
+  const comments = useComments(id)
   const [isEditing, setIsEditing] = useState(false)
 
   if (post.isLoading) return <p className="text-stone-500">Loading post…</p>
@@ -41,7 +44,7 @@ export function PostPage() {
   const handleDelete = () => deletePost.mutate({ id, imageUrls: image_urls }, { onSuccess: () => navigate(backTo, { replace: true }) })
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="space-y-6">
       <Link to={backTo} className="inline-flex items-center gap-1 text-sm text-stone-600 hover:text-emerald-700">
         <ArrowLeftIcon size={16} aria-hidden="true" />
         Back to {community ? community.name : 'communities'}
@@ -50,7 +53,17 @@ export function PostPage() {
         <EditPostForm post={post.data} onDone={() => setIsEditing(false)} />
       ) : (
         <article className="rounded-lg bg-white p-4 shadow-sm">
-          <PostMeta post={post.data} />
+          <div className="flex items-center justify-between gap-3">
+            <PostMeta post={post.data} />
+            {isOwner && (
+              <EditDeleteButtons
+                onEdit={() => setIsEditing(true)}
+                onDelete={handleDelete}
+                isDeleting={deletePost.isPending}
+                confirmMessage="Delete this post and all its comments? This cannot be undone."
+              />
+            )}
+          </div>
           <h1 className="mt-2 text-xl font-semibold break-words text-stone-900">{title}</h1>
           {body && <p className="mt-3 break-words whitespace-pre-line text-stone-800">{body}</p>}
           {image_urls.length > 0 && (
@@ -63,17 +76,19 @@ export function PostPage() {
               ))}
             </ul>
           )}
-          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-stone-100 pt-3">
-            <VoteButtons target="post" id={id} score={post.data.score} myVote={myVoteOf(post.data)} />
-            {isOwner && (
-              <EditDeleteButtons
-                onEdit={() => setIsEditing(true)}
-                onDelete={handleDelete}
-                isDeleting={deletePost.isPending}
-                confirmMessage="Delete this post and all its comments? This cannot be undone."
-              />
+          {/* Pill backgrounds around the actions, like the mockup; wrapped here so comments' vote buttons stay plain. */}
+          <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-stone-100 pt-3">
+            <div className="rounded-full bg-sage-100 px-1.5 py-1">
+              <VoteButtons target="post" id={id} score={post.data.score} myVote={myVoteOf(post.data)} />
+            </div>
+            {comments.data && (
+              <span className="flex items-center gap-1.5 rounded-full bg-sage-100 px-3 py-1.5 text-sm font-semibold text-stone-600">
+                <ChatCircleIcon size={18} aria-hidden="true" />
+                {comments.data.length}
+                <span className="sr-only">{comments.data.length === 1 ? 'comment' : 'comments'}</span>
+              </span>
             )}
-            <PostBookmarkButton postId={id} className="ml-auto" />
+            <PostBookmarkButton postId={id} className="ml-auto !size-10 bg-sage-100" />
           </div>
           {deletePost.error && <p className="mt-2 text-sm text-red-600">{deletePost.error.message}</p>}
         </article>

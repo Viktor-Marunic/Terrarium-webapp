@@ -57,7 +57,7 @@ export function CommentForm({
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-md bg-emerald-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-60"
+          className="rounded-md bg-forest-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-forest-800 disabled:opacity-60"
         >
           {isPending ? 'Saving…' : submitLabel}
         </button>
