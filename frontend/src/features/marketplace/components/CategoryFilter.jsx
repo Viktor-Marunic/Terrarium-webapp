@@ -1,15 +1,7 @@
 // Row of category chips ("All" + one per category). The choice lives in the URL (?category=value),
-// like CommunityFilter, so it survives refresh and back. Styled after the marketplace mockup (forest/paper tokens).
-import { Link } from 'react-router-dom'
+// like CommunityFilter, so it survives refresh and back.
+import { FilterChipLink } from '../../../components/common/FilterChipLink'
 import { listingCategories } from '../schemas'
-
-function chipClass(isActive) {
-  return `block shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-    isActive
-      ? 'border-forest-700 bg-forest-700 text-white'
-      : 'border-stone-300 bg-paper text-stone-700 hover:border-stone-400 hover:bg-white'
-  }`
-}
 
 export function CategoryFilter({ activeCategory }) {
   return (
@@ -17,20 +9,17 @@ export function CategoryFilter({ activeCategory }) {
     <nav aria-label="Filter by category" className="-mx-4 overflow-x-auto px-4">
       <ul className="flex gap-2 pb-1">
         <li className="shrink-0">
-          <Link to="/shop" className={chipClass(!activeCategory)} aria-current={!activeCategory ? 'page' : undefined}>
+          <FilterChipLink to="/shop" isActive={!activeCategory}>
             All
-          </Link>
+          </FilterChipLink>
         </li>
-        {listingCategories.map(({ value, label }) => {
-          const isActive = value === activeCategory
-          return (
-            <li key={value} className="shrink-0">
-              <Link to={`/shop?category=${value}`} className={chipClass(isActive)} aria-current={isActive ? 'page' : undefined}>
-                {label}
-              </Link>
-            </li>
-          )
-        })}
+        {listingCategories.map(({ value, label }) => (
+          <li key={value} className="shrink-0">
+            <FilterChipLink to={`/shop?category=${value}`} isActive={value === activeCategory}>
+              {label}
+            </FilterChipLink>
+          </li>
+        ))}
       </ul>
     </nav>
   )

@@ -1,6 +1,6 @@
 // Turns a notification row into what the list shows: an icon, a sentence and where clicking it goes.
 // One entry per type in the notifications.type check constraint; add new types (e.g. messages) here too.
-import { ChatCircleIcon, HeartIcon, ShoppingBagIcon, StorefrontIcon, ArrowFatUpIcon } from '@phosphor-icons/react'
+import { ChatCircleIcon, HeartIcon, ShoppingBagIcon, StorefrontIcon, ArrowFatUpIcon, CalendarDotsIcon } from '@phosphor-icons/react'
 
 /** @returns {{ icon: React.ComponentType, text: string, to: string }} */
 export function describeNotification(notification) {
@@ -26,6 +26,12 @@ export function describeNotification(notification) {
       return { icon: HeartIcon, text: `${actor} saved your listing ${listing}`, to: listingLink }
     case 'listing_in_cart':
       return { icon: ShoppingBagIcon, text: `${actor} added ${listing} to their bag`, to: listingLink }
+    case 'new_event':
+      return {
+        icon: CalendarDotsIcon,
+        text: `${actor} is hosting “${notification.event?.title ?? 'an event'}”`,
+        to: `/events/${notification.event_id}`,
+      }
     default:
       return { icon: ChatCircleIcon, text: 'New activity', to: '/' }
   }

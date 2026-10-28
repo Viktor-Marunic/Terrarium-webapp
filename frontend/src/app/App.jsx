@@ -14,6 +14,9 @@ import { ListingPage } from '../pages/ListingPage'
 import { EditListingPage } from '../pages/EditListingPage'
 import { GuidePage } from '../pages/GuidePage'
 import { EventsPage } from '../pages/EventsPage'
+import { EventPage } from '../pages/EventPage'
+import { CreateEventPage } from '../pages/CreateEventPage'
+import { EditEventPage } from '../pages/EditEventPage'
 
 const queryClient = new QueryClient()
 
@@ -42,6 +45,9 @@ export function App() {
             <Route path="shop/:id/edit" element={<EditListingPage />} />
             <Route path="guide" element={<GuidePage />} />
             <Route path="events" element={<EventsPage />} />
+            <Route path="events/new" element={<CreateEventPage />} />
+            <Route path="events/:id" element={<EventPage />} />
+            <Route path="events/:id/edit" element={<EditEventPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -1,5 +1,5 @@
 // A listing photo that fills its box, or a soft sage plant placeholder when there is no photo.
-// Shared by the marketplace (cards, gallery) and the shopping bag.
+// Shared by the marketplace (cards, gallery), the shopping bag and events.
 // The parent sets the size/aspect ratio and must be `relative`. The photo is absolutely positioned so its own
 // size can never stretch the box: in normal flow a tall phone photo makes an aspect-ratio box grow to fit it.
 // object-contain shows the whole photo (nothing cropped or distorted); the sage background fills any leftover space.
