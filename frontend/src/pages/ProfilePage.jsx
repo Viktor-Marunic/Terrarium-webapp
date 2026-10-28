@@ -65,7 +65,8 @@ export function ProfilePage() {
   ]
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-6">
+    // Full content width, like Community, Shop and Events, so the heading lines up with the logo and tabs.
+    <div className="space-y-6">
       <header className="flex items-center justify-between gap-4">
         <h1 className="font-display text-3xl text-forest-800">Profile</h1>
         {profile.data && <EditProfileButton profile={profile.data} />}
