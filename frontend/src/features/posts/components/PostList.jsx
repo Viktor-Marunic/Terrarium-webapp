@@ -6,11 +6,12 @@ import { POSTS_PAGE_SIZE } from '../api'
 import { PostCard } from './PostCard'
 import { Pagination } from './Pagination'
 
-export function PostList({ communityId, sort, authorId, emptyText = 'No posts yet. Be the first!' }) {
+// ids is the profile's optional "Saved" filter; see listPosts.
+export function PostList({ communityId, sort, authorId, ids, emptyText = 'No posts yet. Be the first!' }) {
   const [searchParams] = useSearchParams()
   // A missing or broken ?page= (e.g. "abc" or "-3") means page 1.
   const page = Math.max(1, Number.parseInt(searchParams.get('page'), 10) || 1)
-  const posts = usePosts({ communityId, sort, authorId, page: page - 1 })
+  const posts = usePosts({ communityId, sort, authorId, ids, page: page - 1 })
 
   if (posts.isLoading) return <p className="text-stone-500">Loading posts…</p>
   if (posts.error) return <p className="text-red-600">Could not load posts: {posts.error.message}</p>

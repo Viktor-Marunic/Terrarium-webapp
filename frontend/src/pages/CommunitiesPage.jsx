@@ -23,7 +23,8 @@ export function CommunitiesPage() {
   const active = communities.data.find((community) => community.slug === activeSlug)
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5">
+    // Full content width, like Shop and Events, so the heading lines up with the logo and tabs.
+    <div className="space-y-5">
       {/* flex-wrap: on very narrow phones the button drops under the heading instead of overflowing. */}
       <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <h1 className="font-display text-3xl text-forest-800">{active ? active.name : 'Community'}</h1>

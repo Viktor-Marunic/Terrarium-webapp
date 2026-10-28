@@ -7,7 +7,7 @@ const PAGE_SIZE = 30
 
 // actor uses the explicit foreign key name because notifications references profiles twice (recipient and actor).
 const NOTIFICATION_COLUMNS =
-  'id, type, read_at, created_at, post_id, listing_id, actor:profiles!notifications_actor_id_fkey(username), post:posts(title), listing:listings(title)'
+  'id, type, read_at, created_at, post_id, listing_id, event_id, actor:profiles!notifications_actor_id_fkey(username), post:posts(title), listing:listings(title), event:events(title)'
 
 /** The user's newest notifications (up to 30), newest first. */
 export async function listNotifications() {

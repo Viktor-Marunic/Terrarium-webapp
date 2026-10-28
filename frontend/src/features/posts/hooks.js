@@ -3,13 +3,14 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import { createPost, deletePost, getPost, listPosts, updatePost } from './api'
 
 /**
- * One page of the feed: { posts, totalCount }. Filters by communityId / authorId when given; sort is 'new' or 'top';
- * page starts at 0. Keeps showing the previous page while the next one loads, so pagination doesn't flash.
+ * One page of the feed: { posts, totalCount }. Filters by communityId / authorId / ids when given (see listPosts);
+ * sort is 'new' or 'top'; page starts at 0. Keeps showing the previous page while the next one loads,
+ * so pagination doesn't flash.
  */
-export function usePosts({ communityId, sort = 'new', authorId, page = 0 } = {}) {
+export function usePosts({ communityId, sort = 'new', authorId, ids, page = 0 } = {}) {
   return useQuery({
-    queryKey: ['posts', communityId ?? 'all', sort, authorId ?? 'everyone', page],
-    queryFn: () => listPosts({ communityId, sort, authorId, page }),
+    queryKey: ['posts', communityId ?? 'all', sort, authorId ?? 'everyone', ids?.join(',') ?? 'any-id', page],
+    queryFn: () => listPosts({ communityId, sort, authorId, ids, page }),
     placeholderData: keepPreviousData,
   })
 }

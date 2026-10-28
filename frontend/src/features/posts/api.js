@@ -14,11 +14,12 @@ const POST_COLUMNS =
 /**
  * One page of posts from every community or only one (pass communityId), sorted 'new' (newest first) or
  * 'top' (highest score). Pass authorId to get only one user's posts (their profile). page starts at 0.
+ * Optional profile filter: ids (only these posts, e.g. the profile's "Saved" tab).
  * Each post includes { score, image_urls, author: { username, avatar_url }, community: { slug, name },
  * comments: [{ count }], votes: [{ value }] }.
  * @returns {Promise<{ posts: object[], totalCount: number }>} totalCount counts every matching post, not just this page.
  */
-export async function listPosts({ communityId, sort = 'new', authorId, page = 0 }) {
+export async function listPosts({ communityId, sort = 'new', authorId, ids, page = 0 }) {
   const from = page * POSTS_PAGE_SIZE
   let query = supabase
     .from('posts')
@@ -29,6 +30,7 @@ export async function listPosts({ communityId, sort = 'new', authorId, page = 0 
   query = query.order('created_at', { ascending: false })
   if (communityId) query = query.eq('community_id', communityId)
   if (authorId) query = query.eq('author_id', authorId)
+  if (ids) query = query.in('id', ids)
 
   const { data, error, count } = await query
   if (error) throw error

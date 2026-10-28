@@ -28,6 +28,20 @@ export async function listListings({ category, page = 0 }) {
   return { listings: data, totalCount: count }
 }
 
+/**
+ * Listings for a profile, newest first, active and sold: one seller's (sellerId) or a given set (ids, e.g. saved).
+ * Not paged: a single user's listings stay few.
+ */
+export async function listProfileListings({ sellerId, ids }) {
+  let query = supabase.from('listings').select(LISTING_COLUMNS).order('created_at', { ascending: false })
+  if (sellerId) query = query.eq('seller_id', sellerId)
+  if (ids) query = query.in('id', ids)
+
+  const { data, error } = await query
+  if (error) throw error
+  return data
+}
+
 /** One listing by id (active or sold), or null if it doesn't exist (or was deleted). */
 export async function getListing(id) {
   const { data, error } = await supabase.from('listings').select(LISTING_COLUMNS).eq('id', id).maybeSingle()

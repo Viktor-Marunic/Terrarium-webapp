@@ -6,9 +6,22 @@ import {
   deleteListing,
   getListing,
   listListings,
+  listProfileListings,
   setListingStatus,
   updateListing,
 } from './api'
+
+/**
+ * A profile's listings (one seller's, or a set of ids), active and sold.
+ * Keyed under 'listings' so creating, editing, selling or deleting a listing refreshes it too.
+ */
+export function useProfileListings({ sellerId, ids }) {
+  return useQuery({
+    queryKey: ['listings', 'profile', sellerId ?? 'any-seller', ids?.join(',') ?? 'any-id'],
+    queryFn: () => listProfileListings({ sellerId, ids }),
+    enabled: Boolean(sellerId || ids),
+  })
+}
 
 /**
  * Active listings, all or one category, loaded a page at a time ("Load more listings").

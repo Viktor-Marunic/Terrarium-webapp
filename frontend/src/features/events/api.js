@@ -37,6 +37,16 @@ export async function getEvent(id) {
   return data
 }
 
+/** How many events a user has said "I'm going" to (all time), for the profile stats. Counted in the database. */
+export async function countAttendingEvents(userId) {
+  const { count, error } = await supabase
+    .from('event_attendees')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+  if (error) throw error
+  return count
+}
+
 /** How many events a user has hosted (all time), for "Hosted 6 events" on the host card. Counted in the database. */
 export async function countHostedEvents(hostId) {
   const { count, error } = await supabase.from('events').select('id', { count: 'exact', head: true }).eq('host_id', hostId)
