@@ -36,8 +36,9 @@ export function PostPage() {
     )
   }
 
-  const { title, body, community, author_id, image_urls } = post.data
-  const backTo = community ? `/communities?c=${community.slug}` : '/communities'
+  const { title, body, author_id, image_urls } = post.data
+  // Always back to the whole community feed, not the post's own community filter.
+  const backTo = '/communities'
   // UI only; the database's RLS policies are what actually stop others from editing.
   const isOwner = session?.user.id === author_id
 
@@ -47,7 +48,7 @@ export function PostPage() {
     <div className="space-y-6">
       <Link to={backTo} className="inline-flex items-center gap-1 text-sm text-stone-600 hover:text-emerald-700">
         <ArrowLeftIcon size={16} aria-hidden="true" />
-        Back to {community ? community.name : 'communities'}
+        Back to community
       </Link>
       {isEditing ? (
         <EditPostForm post={post.data} onDone={() => setIsEditing(false)} />
