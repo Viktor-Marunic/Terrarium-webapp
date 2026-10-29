@@ -2,7 +2,7 @@
 // Active listings in a grid, filterable with ?category=<value>, plus the way into the sell form.
 // Composes three features: marketplace cards get the bookmark heart and "Add to bag" from this page.
 import { Link, useSearchParams } from 'react-router-dom'
-import { TagIcon } from '@phosphor-icons/react'
+import { PlusIcon } from '@phosphor-icons/react'
 import { useSession } from '../features/auth/hooks'
 import { listingCategories } from '../features/marketplace/schemas'
 import { CategoryFilter } from '../features/marketplace/components/CategoryFilter'
@@ -25,7 +25,7 @@ export function ShopPage() {
           to="/shop/new"
           className="flex shrink-0 items-center gap-2 rounded-lg bg-forest-700 px-4 py-2.5 text-sm font-medium text-white transition-[background-color,scale] hover:bg-forest-800 motion-safe:active:scale-[0.97]"
         >
-          <TagIcon size={18} aria-hidden="true" />
+          <PlusIcon size={16} weight="bold" aria-hidden="true" />
           Sell an item
         </Link>
       </header>

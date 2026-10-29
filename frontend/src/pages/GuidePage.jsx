@@ -14,7 +14,7 @@ export function GuidePage() {
   if (guide.error) return <p className="text-red-600">Could not load guide: {guide.error.message}</p>
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="space-y-4">
       <Link to="/guide" className="inline-flex items-center gap-1.5 text-sm font-medium text-forest-700 hover:text-forest-800">
         <ArrowLeftIcon size={16} aria-hidden="true" />
         Guides

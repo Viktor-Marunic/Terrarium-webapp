@@ -1,6 +1,6 @@
-// React hooks for guides, likes and saves.
+// React hooks for guides and saves.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createGuide, deleteGuide, getGuide, listGuides, setGuideLike, setGuideSave, updateGuide } from './api'
+import { createGuide, deleteGuide, getGuide, listGuides, setGuideSave, updateGuide } from './api'
 
 /** Guides, all or one category, newest first. */
 export function useGuides(category) {
@@ -12,7 +12,7 @@ export function useGuide(id) {
   return useQuery({ queryKey: ['guide', id], queryFn: () => getGuide(id) })
 }
 
-/** Shared invalidation: the guide itself and every list (counts, hearts and saves show in both). */
+/** Shared invalidation: the guide itself and every list (save counts show in both). */
 function useGuideMutation(mutationFn) {
   const queryClient = useQueryClient()
   return useMutation({
@@ -30,7 +30,5 @@ export const useCreateGuide = () => useGuideMutation(createGuide)
 export const useUpdateGuide = () => useGuideMutation(updateGuide)
 /** Mutation taking { id, imageUrl }. */
 export const useDeleteGuide = () => useGuideMutation(deleteGuide)
-/** Mutation taking { guideId, liked }. */
-export const useSetGuideLike = () => useGuideMutation(setGuideLike)
 /** Mutation taking { guideId, saved }. */
 export const useSetGuideSave = () => useGuideMutation(setGuideSave)

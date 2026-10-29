@@ -1,10 +1,10 @@
-// One guide in the list: cover photo, category + reading time, title, the start of the text, author, like/save.
+// One guide in the list: cover photo, level + category + reading time, title, the start of the text, author, save.
 // The whole card opens the guide (the title link is stretched over the card).
 import { Link } from 'react-router-dom'
 import { ListingImage } from '../../../components/common/ListingImage'
 import { Avatar } from '../../profiles/components/Avatar'
-import { guideCategoryLabel, readingTime } from '../schemas'
-import { GuideReactions } from './GuideReactions'
+import { guideCategoryLabel, guideLevelLabel, readingTime } from '../schemas'
+import { GuideSaveButton } from './GuideSaveButton'
 
 export function GuideCard({ guide }) {
   return (
@@ -15,7 +15,7 @@ export function GuideCard({ guide }) {
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
         <p className="text-[11px] font-semibold tracking-wide text-stone-500 uppercase">
-          {guideCategoryLabel(guide.category)} · {readingTime(guide.body)}
+          {guideLevelLabel(guide.level)} · {guideCategoryLabel(guide.category)} · {readingTime(guide)}
         </p>
         <h2 className="text-lg leading-snug font-semibold wrap-anywhere text-stone-900">
           {/* after:absolute inset-0 makes this link cover the whole card. */}
@@ -28,7 +28,7 @@ export function GuideCard({ guide }) {
         <div className="mt-auto flex items-center gap-2 pt-2 text-xs">
           <Avatar profile={guide.author} size={22} />
           <span className="min-w-0 flex-1 truncate text-stone-600">@{guide.author?.username ?? 'deleted'}</span>
-          <GuideReactions guide={guide} />
+          <GuideSaveButton guide={guide} />
         </div>
       </div>
     </article>
