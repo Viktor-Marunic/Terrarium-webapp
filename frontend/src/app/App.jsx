@@ -19,10 +19,14 @@ import { EventsPage } from '../pages/EventsPage'
 import { EventPage } from '../pages/EventPage'
 import { CreateEventPage } from '../pages/CreateEventPage'
 import { EditEventPage } from '../pages/EditEventPage'
+import { useTapFeedback } from '../lib/useTapFeedback'
 
 const queryClient = new QueryClient()
 
 export function App() {
+  // Every tap anywhere in the app squashes and stretches what was pressed (see useTapFeedback).
+  useTapFeedback()
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

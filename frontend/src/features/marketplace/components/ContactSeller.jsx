@@ -1,7 +1,9 @@
 // "Contact seller" button that reveals the contact info the seller wrote on their listing.
 // Behind a click so the details aren't the first thing on the page; an email address becomes a mailto: link.
+// The revealed box fades in where the button was.
 import { useState } from 'react'
 import { ChatCircleIcon } from '@phosphor-icons/react'
+import { FadeIn } from '../../../components/common/FadeIn'
 
 // Loose check: only decides whether to offer a mailto: link, not whether the address is valid.
 const looksLikeEmail = (text) => /^\S+@\S+\.\S+$/.test(text)
@@ -24,7 +26,7 @@ export function ContactSeller({ contactInfo, sellerUsername }) {
   }
 
   return (
-    <div className="rounded-lg border border-sage-200 bg-sage-50 p-4">
+    <FadeIn as="div" className="rounded-lg border border-sage-200 bg-sage-50 p-4">
       <p className="text-sm text-stone-600">Reach @{sellerUsername} at:</p>
       <p className="mt-1 font-medium wrap-anywhere text-stone-900">
         {looksLikeEmail(contactInfo) ? (
@@ -36,6 +38,6 @@ export function ContactSeller({ contactInfo, sellerUsername }) {
           contactInfo
         )}
       </p>
-    </div>
+    </FadeIn>
   )
 }

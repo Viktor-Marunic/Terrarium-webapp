@@ -2,6 +2,7 @@
 // and trailing slots inside the box (initials preview, show-password eye), a hint, and the validation message.
 // Spread react-hook-form's register() into it. Auth-only: other forms keep using components/common/FormField.
 import { useId } from 'react'
+import { FadeIn } from '../../../components/common/FadeIn'
 
 export function AuthField({ label, required = false, hint, error, leading, trailing, ...inputProps }) {
   const id = useId()
@@ -38,9 +39,10 @@ export function AuthField({ label, required = false, hint, error, leading, trail
         </p>
       )}
       {error && (
-        <p id={errorId} className="mt-1 text-sm text-red-600">
+        // Fades in, and again when the message changes (key).
+        <FadeIn as="p" key={error} id={errorId} className="mt-1 text-sm text-red-600">
           {error}
-        </p>
+        </FadeIn>
       )}
     </div>
   )

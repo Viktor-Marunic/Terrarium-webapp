@@ -3,9 +3,12 @@
 // renderImageOverlay(listing) / renderAction(listing) fill ListingCard's slots (see ListingCard).
 import { useListings } from '../hooks'
 import { ListingCard } from './ListingCard'
+import { useStaggerIn } from '../../../lib/useStaggerIn'
 
 export function ListingGrid({ category, renderImageOverlay, renderAction }) {
   const listings = useListings(category)
+  // Cards rise in one after another when they appear (before the early returns: hooks run every render).
+  const listRef = useStaggerIn([listings.data])
 
   if (listings.isLoading) return <p className="text-stone-500">Loading listings…</p>
   if (listings.error) return <p className="text-red-600">Could not load listings: {listings.error.message}</p>
@@ -19,7 +22,7 @@ export function ListingGrid({ category, renderImageOverlay, renderAction }) {
   return (
     <>
       {/* Two columns even on phones, like the mockup; three from md up. */}
-      <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+      <ul ref={listRef} className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
         {items.map((listing) => (
           // flex so every card stretches to the tallest card in its row.
           <li key={listing.id} className="flex min-w-0">

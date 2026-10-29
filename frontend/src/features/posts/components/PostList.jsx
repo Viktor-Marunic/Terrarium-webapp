@@ -5,6 +5,7 @@ import { usePosts } from '../hooks'
 import { POSTS_PAGE_SIZE } from '../api'
 import { PostCard } from './PostCard'
 import { Pagination } from './Pagination'
+import { useStaggerIn } from '../../../lib/useStaggerIn'
 
 // ids is the profile's optional "Saved" filter; see listPosts.
 export function PostList({ communityId, sort, authorId, ids, emptyText = 'No posts yet. Be the first!' }) {
@@ -12,6 +13,8 @@ export function PostList({ communityId, sort, authorId, ids, emptyText = 'No pos
   // A missing or broken ?page= (e.g. "abc" or "-3") means page 1.
   const page = Math.max(1, Number.parseInt(searchParams.get('page'), 10) || 1)
   const posts = usePosts({ communityId, sort, authorId, ids, page: page - 1 })
+  // Cards rise in one after another when they appear (before the early returns: hooks run every render).
+  const listRef = useStaggerIn([posts.data])
 
   if (posts.isLoading) return <p className="text-stone-500">Loading posts…</p>
   if (posts.error) return <p className="text-red-600">Could not load posts: {posts.error.message}</p>
@@ -21,7 +24,7 @@ export function PostList({ communityId, sort, authorId, ids, emptyText = 'No pos
 
   return (
     <div className="space-y-3">
-      <ul className={`space-y-3 transition-opacity ${posts.isPlaceholderData ? 'opacity-60' : ''}`}>
+      <ul ref={listRef} className={`space-y-3 transition-opacity ${posts.isPlaceholderData ? 'opacity-60' : ''}`}>
         {items.map((post) => (
           <li key={post.id}>
             <PostCard post={post} />

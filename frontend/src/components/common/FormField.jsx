@@ -1,5 +1,7 @@
 // Labeled input, textarea (as="textarea") or select (as="select", options as children) with its validation message.
-// Spread react-hook-form's register() into it.
+// Spread react-hook-form's register() into it. The validation message fades in (and again when it changes).
+import { FadeIn } from './FadeIn'
+
 export function FormField({ label, error, as: Control = 'input', ...inputProps }) {
   return (
     <label className="block text-left">
@@ -9,7 +11,11 @@ export function FormField({ label, error, as: Control = 'input', ...inputProps }
         aria-invalid={Boolean(error)}
         {...inputProps}
       />
-      {error && <span className="mt-1 block text-sm text-red-600">{error}</span>}
+      {error && (
+        <FadeIn key={error} className="mt-1 block text-sm text-red-600">
+          {error}
+        </FadeIn>
+      )}
     </label>
   )
 }

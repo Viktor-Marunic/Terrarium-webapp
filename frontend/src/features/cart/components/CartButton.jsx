@@ -1,9 +1,12 @@
 // Header bag icon with an item count; opens the bag as a pop-up Sheet (bottom sheet on phones, side panel on desktop).
 // "Half functional" by design: items can be added, counted and removed, but checkout is disabled (no payments).
-import { useState } from 'react'
+// Motion: data-cart-target is where "Add to bag" dots fly to; the count bumps when it goes up; rows rise in on open.
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { InfoIcon, ShoppingBagIcon } from '@phosphor-icons/react'
 import { Sheet } from '../../../components/common/Sheet'
+import { bump } from '../../../lib/motion'
+import { useStaggerIn } from '../../../lib/useStaggerIn'
 import { useCartItems } from '../hooks'
 import { CartItemRow } from './CartItemRow'
 
@@ -17,16 +20,32 @@ export function CartButton() {
   const subtotal = available.reduce((sum, item) => sum + item.listing.price * item.quantity, 0)
   const close = () => setIsOpen(false)
 
+  // Bump the number when it goes up (not on the first load, and not when it goes down).
+  const countRef = useRef(null)
+  const previousCount = useRef(null)
+  useEffect(() => {
+    if (previousCount.current !== null && itemCount > previousCount.current) bump(countRef.current)
+    previousCount.current = itemCount
+  }, [itemCount])
+
+  // Rows rise in each time the bag opens (the sheet mounts fresh), and when new ones appear.
+  const listRef = useStaggerIn([isOpen, cart.data], { scrollLinked: false })
+
   return (
     <>
       <button
         type="button"
+        data-cart-target
         onClick={() => setIsOpen(true)}
         aria-label={`Shopping bag, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
         className="flex h-10 items-center gap-1 rounded-full px-2 text-forest-800 transition-colors hover:bg-sage-50"
       >
         <ShoppingBagIcon size={24} aria-hidden="true" />
-        {itemCount > 0 && <span className="text-sm font-medium tabular-nums">{itemCount}</span>}
+        {itemCount > 0 && (
+          <span ref={countRef} className="inline-block text-sm font-medium tabular-nums">
+            {itemCount}
+          </span>
+        )}
       </button>
 
       <Sheet
@@ -73,7 +92,7 @@ export function CartButton() {
           </div>
         )}
         {items.length > 0 && (
-          <ul className="divide-y divide-stone-200">
+          <ul ref={listRef} className="divide-y divide-stone-200">
             {items.map((item) => (
               <CartItemRow key={item.id} item={item} onNavigate={close} />
             ))}

@@ -3,6 +3,7 @@
 import { format } from 'date-fns'
 import { avatarSrc } from '../avatar'
 import { badgeIcon } from '../badgeIcons'
+import { CountUp } from './CountUp'
 
 /**
  * stats: [{ label, value }] from the page, because posts, listings and events belong to other features;
@@ -34,7 +35,9 @@ export function ProfileCard({ profile, stats, badges }) {
           // dt after dd in the markup order is fine for screen readers; flex-col-reverse puts the number on top.
           <div key={label} className="flex flex-col-reverse">
             <dt className="text-xs text-stone-500">{label}</dt>
-            <dd className="text-lg font-semibold text-forest-800 tabular-nums">{value ?? '–'}</dd>
+            <dd className="text-lg font-semibold text-forest-800 tabular-nums">
+              <CountUp value={value} />
+            </dd>
           </div>
         ))}
       </dl>

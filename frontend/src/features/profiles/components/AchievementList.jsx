@@ -1,8 +1,11 @@
 // "Achievements" section of the profile (TerraSpace mockup): one card per badge with a progress bar.
 // Shows the first few, with "See all N achievements" to expand. `badges` come from useUserBadges
 // (the database awards them and computes progress).
+// Motion: cards rise in, and each progress bar fills from empty to the user's progress when it first appears.
 import { useState } from 'react'
 import { ArrowRightIcon, CheckCircleIcon } from '@phosphor-icons/react'
+import { DURATION, gsap, prefersReducedMotion, useGSAP } from '../../../lib/motion'
+import { useStaggerIn } from '../../../lib/useStaggerIn'
 import { badgeIcon } from '../badgeIcons'
 
 const COLLAPSED_COUNT = 4
@@ -11,6 +14,25 @@ export function AchievementList({ badges }) {
   const [showAll, setShowAll] = useState(false)
   const earnedCount = badges.filter((b) => b.earned_at).length
   const shown = showAll ? badges : badges.slice(0, COLLAPSED_COUNT)
+  const listRef = useStaggerIn([showAll, badges])
+
+  // Fill bars that haven't filled yet (the first four, then the rest after "See all").
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) return
+      const bars = [...listRef.current.querySelectorAll('progress:not([data-filled])')]
+      if (bars.length === 0) return
+      gsap.from(bars, {
+        attr: { value: 0 },
+        duration: DURATION.delight,
+        ease: 'ui-out',
+        stagger: 0.06,
+        delay: 0.1,
+        onComplete: () => bars.forEach((bar) => (bar.dataset.filled = 'true')),
+      })
+    },
+    { dependencies: [showAll, badges], scope: listRef },
+  )
 
   return (
     <section className="space-y-3">
@@ -21,7 +43,7 @@ export function AchievementList({ badges }) {
         </span>
       </div>
 
-      <ul className="space-y-3">
+      <ul ref={listRef} className="space-y-3">
         {shown.map(({ id, title, description, icon, progress, goal, earned_at }) => {
           const Icon = badgeIcon(icon)
           return (
