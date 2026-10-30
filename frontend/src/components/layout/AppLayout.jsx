@@ -30,11 +30,9 @@ export function AppLayout() {
         return
       }
       if (from !== -1 && to !== -1 && from !== to) {
-        // Next tab comes in from the right, previous tab from the left.
+        // A plain slide: the next tab comes in from the right edge, the previous one from the left, no bounce.
         const side = to > from ? 1 : -1
-        gsap.from(page, {
-          x: side * 140, rotation: side * 4, opacity: 0, duration: 0.5, ease: 'back.out(1.3)', clearProps: 'transform,opacity',
-        })
+        gsap.from(page, { x: side * window.innerWidth, duration: 0.35, ease: 'ui-out', clearProps: 'transform' })
         return
       }
       gsap.from(page, { opacity: 0, y: 40, scale: 0.94, duration: 0.45, ease: 'back.out(1.4)', clearProps: 'transform,opacity' })

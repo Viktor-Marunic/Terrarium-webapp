@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from '../features/auth/components/RequireAuth'
 import { AppLayout } from '../components/layout/AppLayout'
 import { LoginPage } from '../pages/LoginPage'
+import { NotFoundPage } from '../pages/NotFoundPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { CommunitiesPage } from '../pages/CommunitiesPage'
 import { PostPage } from '../pages/PostPage'
@@ -32,6 +33,8 @@ export function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          {/* Outside RequireAuth: guests reach it from the login page ("Continue as a guest"). */}
+          <Route path="/404" element={<NotFoundPage />} />
           {/* Every page inside the layout needs a logged-in user for now. */}
           <Route
             element={

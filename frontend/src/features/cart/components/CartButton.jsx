@@ -1,9 +1,10 @@
 // Header bag icon with an item count; opens the bag as a pop-up Sheet (bottom sheet on phones, side panel on desktop).
-// "Half functional" by design: items can be added, counted and removed, but checkout is disabled (no payments).
+// "Half functional" by design: items can be added, counted and removed, but "Go to checkout" only leads to the
+// 404 page (no payments).
 // Motion: data-cart-target is where "Add to bag" dots fly to; the count bumps when it goes up; rows rise in on open.
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { InfoIcon, ShoppingBagIcon } from '@phosphor-icons/react'
+import { ShoppingBagIcon } from '@phosphor-icons/react'
 import { Sheet } from '../../../components/common/Sheet'
 import { bump } from '../../../lib/motion'
 import { useStaggerIn } from '../../../lib/useStaggerIn'
@@ -70,13 +71,14 @@ export function CartButton() {
                   <dd className="text-xl font-bold text-forest-800 tabular-nums">{subtotal} kr</dd>
                 </div>
               </dl>
-              <p className="flex items-start gap-2 rounded-lg bg-cream p-3 text-sm text-stone-600">
-                <InfoIcon size={18} className="mt-px shrink-0" aria-hidden="true" />
-                Checkout is coming soon. For now, contact sellers from the listing page to arrange payment and pickup.
-              </p>
-              <button type="button" disabled className="w-full rounded-lg bg-forest-700 py-3.5 font-medium text-white opacity-60">
+              {/* There's no checkout (no payments), so this leads to the 404 page; closing the bag first. */}
+              <Link
+                to="/404"
+                onClick={close}
+                className="block w-full rounded-lg bg-forest-700 py-3.5 text-center font-medium text-white transition-colors hover:bg-forest-800"
+              >
                 Go to checkout
-              </button>
+              </Link>
             </div>
           )
         }

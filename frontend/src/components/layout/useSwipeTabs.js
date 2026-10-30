@@ -1,7 +1,7 @@
 // Hook (used by AppLayout): swipe left/right on a main tab page (Community, Guides, Shop, Events) to go to the
-// neighbouring tab. The page follows the finger (tilting and fading a little); let go past a quarter of the
-// screen, or flick, and it flies off while the next tab slides in from that side (AppLayout's transition).
-// Let go early and it springs back. Past the first/last tab it only rubber-bands.
+// neighbouring tab. The page slides with the finger; let go past a quarter of the screen, or flick, and it
+// slides off while the next tab slides in from that side (AppLayout's transition). Let go early and it slides
+// back. Past the first/last tab it only rubber-bands. Plain slides only: no tilt, fade or bounce.
 //
 // Touch only (a mouse drag on desktop would fight text selection). Vertical swipes still scroll the page:
 // the page element has touch-action pan-y, so the browser scrolls and cancels this gesture by itself.
@@ -38,7 +38,7 @@ export function useSwipeTabs(pageRef) {
       target.closest('input, textarea, select, [contenteditable="true"], .overflow-x-auto, [data-no-swipe]')
 
     const springBack = () =>
-      gsap.to(page, { x: 0, rotation: 0, opacity: 1, duration: 0.7, ease: 'elastic.out(1, 0.45)', overwrite: true })
+      gsap.to(page, { x: 0, duration: 0.3, ease: 'ui-out', overwrite: true })
 
     const onDown = (event) => {
       if (event.pointerType !== 'touch' || ignored(event.target)) return
@@ -63,7 +63,7 @@ export function useSwipeTabs(pageRef) {
       // Full movement towards an existing neighbour; heavy resistance past the first/last tab.
       const hasNeighbour = dx < 0 ? index < navItems.length - 1 : index > 0
       const move = dx * (hasNeighbour ? 0.85 : 0.25)
-      gsap.set(page, { x: move, rotation: move / 45, opacity: 1 - Math.min(Math.abs(move) / 600, 0.5) })
+      gsap.set(page, { x: move })
     }
 
     const onUp = (event) => {
@@ -88,8 +88,8 @@ export function useSwipeTabs(pageRef) {
         return
       }
       gsap.to(page, {
-        x: -direction * window.innerWidth, rotation: -direction * 10, opacity: 0,
-        duration: 0.22, ease: 'power2.in', overwrite: true,
+        x: -direction * window.innerWidth,
+        duration: 0.2, ease: 'power1.in', overwrite: true,
         onComplete: () => navigate(target.to),
       })
     }
