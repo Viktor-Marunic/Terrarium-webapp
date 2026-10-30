@@ -1,0 +1,60 @@
+# Builds the React app in frontend/ and publishes it to GitHub Pages on every push to main
+# (or by hand from the Actions tab). GitHub Pages can only serve plain files, so this runs `npm run build`
+# and publishes frontend/dist, instead of the raw source code.
+#
+# One-time setup in the repo on GitHub (Settings):
+#   - Pages → Build and deployment → Source: "GitHub Actions"
+#   - Secrets and variables → Actions → New repository secret:
+#       VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (the same values as frontend/.env.local, which isn't in git)
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deployment at a time; a newer push replaces one still waiting.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build
+        env:
+          # Vite bakes these into the build; the anon key is meant to be public (RLS protects the data).
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      # GitHub Pages has no files for app routes like /shop, so opening or refreshing one shows its 404 page.
+      # Serving the app as 404.html too hands those addresses back to React Router.
+      - run: cp dist/index.html dist/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

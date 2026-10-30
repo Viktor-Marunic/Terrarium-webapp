@@ -30,7 +30,8 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      {/* basename = Vite's base: "/" in dev, "/Terrarium-webapp/" on GitHub Pages, so routes match there too. */}
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           {/* Outside RequireAuth: guests reach it from the login page ("Continue as a guest"). */}
